@@ -58,8 +58,6 @@ public class Board{
         case .impossible:
             curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 8)
             break
-        default:
-            break
         }
         return curBoard
 

@@ -1,3 +1,3 @@
-let board = Board(boardMode: BoardMode.superEasy) //Creating a board object of type board
+//let board = Board(boardMode: BoardMode.superEasy) //Creating a board object of type board
 
-board.getBoardString() //Invoking method inside Board class to print board
+//print(board.getBoardString()) //Invoking method inside Board class to print board
