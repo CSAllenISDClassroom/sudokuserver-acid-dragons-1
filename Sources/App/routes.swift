@@ -1,6 +1,6 @@
 import Vapor
 
-//let partialBoard = Board(boardMode: BoardMode.superEasy)
+let partialBoard = Board(boardMode: BoardMode.superEasy)
 
 func routes(_ app: Application) throws {
     app.get { req in
@@ -11,7 +11,7 @@ func routes(_ app: Application) throws {
         return "Hello, world!"
     }
 
-    //app.get("boardeasy") { req -> String in
-    //    return partialBoard.getBoardString()
-    //}
+    app.get("boardeasy") { req -> String in
+        return partialBoard.getBoardString()
+    }
 }
