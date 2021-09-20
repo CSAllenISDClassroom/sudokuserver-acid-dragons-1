@@ -153,4 +153,13 @@ public class Board{
         }
         return(tempString)
     }
+
+    // public func getBoardJSON() -> json {
+    //     var tempString = ""
+    //     for i in 0..<board.count {
+    //         tempString += getLineString(line: board[i])
+
+    //     }
+    //     return(json(tempString))
+    // }
 }

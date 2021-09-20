@@ -1,6 +1,9 @@
 import Vapor
 
 func routes(_ app: Application) throws {
+    let partialBoard = Board(boardMode: BoardMode.superEasy)
+    let gameID = GameID()
+    
     app.get { req in
         return "It works!"
     }
@@ -9,15 +12,34 @@ func routes(_ app: Application) throws {
         return("Hello, world!")
     }
 
-    app.post("test") { req -> String in
-        return("Test works")
+    app.post("game") { req -> String in
+        print("post works")
+        let response = ("Status Code 201 Created" + "\n" + String(gameID.createID(board: partialBoard)))
+        return response
     }
 
-    app.get("gamesupereasy") { req -> String in
-        let partialBoard = Board(boardMode: BoardMode.superEasy)
-        let gameID = GameID()
-        return String(gameID.createID(board: partialBoard))           
+
+    app.get("game", ":id") { req -> String in
+        // let partialBoard = Board(boardMode: BoardMode.superEasy)
+        // let gameID = GameID()
+
+        let _ = req.parameters.get("id")!
+        //return partialBoard.getBoardString()
+        
+        return (String(gameID.createID(board: partialBoard)) + partialBoard.getBoardString())
+
+        
+                                          
     }
+
+
+    // app.get("gamesupereasy") { req in
+    //     let partialBoard = Board(boardMode: BoardMode.superEasy)
+    //     let gameID = GameID()
+    //     let json = JSON()
+    //     try json.set(String(gameID.createID(board: partialBoard)))
+    //     return json
+    // }
 
     app.get("gameeasy") { req -> String in
         let partialBoard = Board(boardMode: BoardMode.easy)
