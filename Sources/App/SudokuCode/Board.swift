@@ -127,6 +127,8 @@ public class Board{
         return board
     }
 
+    //Function that gets the lines for board with appropiate indexing
+    
     private static func getLineWithAssignedPositions(line: [Tile], boardOffset: Int, lineOffset: Int) -> [Tile] {
         for i in 0 ..< line.count {
             let boxIndex = boardOffset + (i / 3)
@@ -136,6 +138,8 @@ public class Board{
         
         return line
     }
+
+    //Function that can alter the partial board allowing for numbers to be inserted or removed
     
     public func alterBoard(num: Int?, boxIndex: Int, cellIndex: Int) -> Board{
         for y in 0..<board.count {
@@ -159,11 +163,11 @@ public class Board{
         var curOffset = -1
         return line.map{tile -> Tile in
             curOffset += 1
-                            if (curOffset == offset) {
-                                return tile.removeNumber()
-                            }
-                            return tile
-                        }
+            if (curOffset == offset) {
+                return tile.removeNumber()
+            }
+            return tile
+        }
     }
     
     //Function that prints one line of the board as an array
@@ -183,6 +187,10 @@ public class Board{
         return(tempString)
     }
 
+    ///////////////////////////////////////////////////////////////////////////////
+    //UNUSED CODE
+    //////////////////////////////////////////////////////////////////////
+    
     // public func getBoardJSON() -> json {
     //     var tempString = ""
     //     for i in 0..<board.count {
