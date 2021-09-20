@@ -6,36 +6,46 @@ func routes(_ app: Application) throws {
     }
 
     app.get("hello") { req -> String in
-        return "Hello, world!"
+        return("Hello, world!")
     }
 
-    app.get("boardsupereasy") { req -> String in
+    app.post("test") { req -> String in
+        return("Test works")
+    }
+
+    app.get("gamesupereasy") { req -> String in
         let partialBoard = Board(boardMode: BoardMode.superEasy)
-        return partialBoard.getBoardString()
+        let gameID = GameID()
+        return stringGameID            
     }
 
-    app.get("boardeasy") { req -> String in
+    app.get("gameeasy") { req -> String in
         let partialBoard = Board(boardMode: BoardMode.easy)
-        return partialBoard.getBoardString()
+        let gameID = GameID()
+        return String(gameID.createID(board: partialBoard))
     }
     
-    app.get("boardmedium") { req -> String in
+    app.get("gamemedium") { req -> String in
         let partialBoard = Board(boardMode: BoardMode.medium)
-        return partialBoard.getBoardString()
+        let gameID = GameID()
+        return String(gameID.createID(board: partialBoard))
     }
 
-    app.get("boardhard") { req -> String in
+    app.get("gamehard") { req -> String in
         let partialBoard = Board(boardMode: BoardMode.hard)
-        return partialBoard.getBoardString()
+        let gameID = GameID()
+        return String(gameID.createID(board: partialBoard))
     }
 
-    app.get("boardsuperhard") { req -> String in
+    app.get("gamesuperhard") { req -> String in
         let partialBoard = Board(boardMode: BoardMode.superHard)
-        return partialBoard.getBoardString()
+        let gameID = GameID()
+        return String(gameID.createID(board: partialBoard))
     }
 
-    app.get("boardimpossible") { req -> String in
+    app.get("gameimpossible") { req -> String in
         let partialBoard = Board(boardMode: BoardMode.impossible)
-        return partialBoard.getBoardString()
+        let gameID = GameID()
+        return String(gameID.createID(board: partialBoard))
     }
 }
