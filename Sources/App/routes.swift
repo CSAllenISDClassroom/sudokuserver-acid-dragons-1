@@ -13,7 +13,6 @@ func routes(_ app: Application) throws {
     }
 
     app.post("game") { req -> String in
-        print("post works")
         let response = ("Status Code 201 Created" + "\n" + String(gameID.createID(board: partialBoard)))
         return response
     }
@@ -25,8 +24,10 @@ func routes(_ app: Application) throws {
 
         let _ = req.parameters.get("id")!
         //return partialBoard.getBoardString()
+
+        let response = ("Status Code 200 OK" + "\n" + partialBoard.getBoardString())
         
-        return (String(gameID.createID(board: partialBoard)) + partialBoard.getBoardString())
+        return response
 
         
                                           
