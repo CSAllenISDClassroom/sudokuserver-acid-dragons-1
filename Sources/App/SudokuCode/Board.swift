@@ -6,6 +6,7 @@ public class Board{
     public init(boardMode: BoardMode){
         solutionBoard = Board.createBoard() // Initializing solution board
         board = Board.partalizeBoard(board: solutionBoard, boardMode: boardMode) //Initializing partial board
+        
     }
 
     //Function That Creates a New Line With Randomized Numbers from 1-9. Returns the Line as a Tile for future implementations
@@ -17,7 +18,7 @@ public class Board{
         for _ in (1 ... 9){
 
             let randomNumber = possibleNumbers.randomElement()! //Randomizes Numbers
-            randomArrayLine.append(Tile(num: randomNumber)) //Adds randomized number to new array
+            randomArrayLine.append(Tile(num: randomNumber, isMutable: false)) //Adds randomized number to new array
 
             for x in (0 ..< possibleNumbers.count){
 
@@ -67,13 +68,13 @@ public class Board{
 
     private static func removeRandomTilesFromEachLine(board: [[Tile]], tilesToRemove: Int) -> [[Tile]]{
         var tempBoard = board
-
-        for boardNum in 0..<tempBoard.count {
-            for curIndex in getRandomIndexes(amount: tilesToRemove) {
-                tempBoard[boardNum][curIndex] = Tile(num: 0)
+        
+        for lineNum in 0..<tempBoard.count {
+            for curIndex in getRandomIndexes(amount: tilesToRemove) {                
+                tempBoard[lineNum][curIndex] = Tile(num: 0, isMutable: true)
             }
         }
-
+        
         return tempBoard
     }
 
@@ -100,7 +101,6 @@ public class Board{
         var shiftedArray = originalArray //Creats a New array that will shift the numbers
 
         for x in (0 ..< shift){
-            
             shiftedArray.append(originalArray[x]) //Adds number to array and removes the number from the beginning to create a shift in the values in the array
             shiftedArray.remove(at:0)
         }
@@ -115,15 +115,44 @@ public class Board{
         var board = [[Tile]]()
         let shifts = [3,3,1,3,3,1,3,3,3]
         var line = createRandomLine()
-
+        var lineOffset = 0
+        
         for i in 0..<shifts.count{
             board.append(line)
-            line = createNewLineByShift(originalArray: line, shift: shifts[i])
+            let shiftedLine = createNewLineByShift(originalArray: line, shift: shifts[i])
+            line = getLineWithAssignedPositions(line: shiftedLine, boardOffset: (i / 3) * 3, lineOffset: lineOffset % 9)
+            lineOffset += 3
         }
-
+        
         return board
     }
 
+    private static func getLineWithAssignedPositions(line: [Tile], boardOffset: Int, lineOffset: Int) -> [Tile] {
+        for i in 0 ..< line.count {
+            let boxIndex = boardOffset + (i / 3)
+            let cellIndex = lineOffset + (i % 3)
+            line[i].setPosition(boxIndex: boxIndex, cellIndex: cellIndex)
+        }
+        
+        return line
+    }
+    
+    public func alterBoard(num: Int?, boxIndex: Int, cellIndex: Int) -> Board{
+        for y in 0..<board.count {
+            for x in 0..<board.count {
+                if (board[y][x].isPosition(boxIndex: boxIndex, cellIndex: cellIndex)) {
+                    if let tileNumber = num {
+                        board[y][x].setNumber(num: tileNumber)
+                    } else {
+                        let _ = board[y][x].removeNumber()
+                    }
+                }
+            }
+        }
+
+        return self
+    }
+    
     //Function that removes a tile from the board
 
     private func removeTileFromLine(line: [Tile], offset: Int) -> [Tile]{

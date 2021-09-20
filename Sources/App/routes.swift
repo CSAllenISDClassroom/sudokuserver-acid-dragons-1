@@ -11,7 +11,7 @@ func routes(_ app: Application) throws {
         return("Hello, world!")
     }
 
-    app.post("game") { req -> String in
+    app.post("games") { req -> String in
         let partialBoard = Board(boardMode: BoardMode.superEasy)
         let gameID = GameID.createID()
         runningGames[gameID] = partialBoard
@@ -19,14 +19,23 @@ func routes(_ app: Application) throws {
     }
 
 
-    app.get("game", ":id") { req -> String in
+    app.get("games", ":id", "cells") { req -> String in
         let id = Int(req.parameters.get("id")!)!
         let partialBoard = runningGames[id]!
         let response = partialBoard.getBoardString()
-        
-        
-        
+       
         return response                                     
+    }
+
+    app.put("games", ":id", "cells", ":boxIndex", ":cellIndex") {req -> String in
+        let id = Int(req.parameters.get("id")!)!
+        let boxIndex = Int(req.parameters.get("boxIndex")!)!
+        let cellIndex = Int(req.parameters.get("cellIndex")!)!
+        let partialBoard = runningGames[id]!
+
+        runningGames[id] = partialBoard.alterBoard(num: 5, boxIndex: boxIndex, cellIndex: cellIndex)
+        
+        return "Worked"
     }
 
 /*    app.get("gamesupereasy") { req -> String in
