@@ -1,9 +1,8 @@
 import Vapor
 
+var runningGames = [Int: Board]()
+
 func routes(_ app: Application) throws {
-    let partialBoard = Board(boardMode: BoardMode.superEasy)
-    let gameID = GameID()
-    
     app.get { req in
         return "It works!"
     }
@@ -13,37 +12,32 @@ func routes(_ app: Application) throws {
     }
 
     app.post("game") { req -> String in
-        let response = ("Status Code 201 Created" + "\n" + String(gameID.createID(board: partialBoard)))
-        return response
+        let partialBoard = Board(boardMode: BoardMode.superEasy)
+        let gameID = GameID.createID()
+        runningGames[gameID] = partialBoard
+        return String(gameID)
     }
 
 
     app.get("game", ":id") { req -> String in
-        // let partialBoard = Board(boardMode: BoardMode.superEasy)
-        // let gameID = GameID()
-
-        let _ = req.parameters.get("id")!
-        //return partialBoard.getBoardString()
-
-        let response = ("Status Code 200 OK" + "\n" + partialBoard.getBoardString())
+        let id = Int(req.parameters.get("id")!)!
+        let partialBoard = runningGames[id]!
+        let response = partialBoard.getBoardString()
         
-        return response
-
         
-                                          
+        
+        return response                                     
     }
 
-
-    // app.get("gamesupereasy") { req in
-    //     let partialBoard = Board(boardMode: BoardMode.superEasy)
-    //     let gameID = GameID()
-    //     let json = JSON()
-    //     try json.set(String(gameID.createID(board: partialBoard)))
-    //     return json
-    // }
+/*    app.get("gamesupereasy") { req -> String in
+        let partialBoard = Board(boardMode: BoardMode.superEasy)
+        let gameID = GameID.createID()
+        sudokoGame[gameID] = partialBoard
+        return String(gameID)
+    }
 
     app.get("gameeasy") { req -> String in
-        let partialBoard = Board(boardMode: BoardMode.easy)
+        partialBoard = Board(boardMode: BoardMode.easy)
         let gameID = GameID()
         return String(gameID.createID(board: partialBoard))
     }
@@ -70,5 +64,5 @@ func routes(_ app: Application) throws {
         let partialBoard = Board(boardMode: BoardMode.impossible)
         let gameID = GameID()
         return String(gameID.createID(board: partialBoard))
-    }
+    }*/
 }

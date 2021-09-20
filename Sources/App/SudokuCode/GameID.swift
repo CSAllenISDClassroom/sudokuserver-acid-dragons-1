@@ -4,8 +4,7 @@ class GameID{
 
     }
 
-    public func createID(board: Board) -> Int{
-        let gameID = Int.random(in: 1 ... 362880)
-        return gameID       
+    public static func createID() -> Int{
+        return Int.random(in: 1 ... 362880)
     }
 }
