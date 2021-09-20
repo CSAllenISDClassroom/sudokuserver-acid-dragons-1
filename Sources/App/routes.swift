@@ -16,7 +16,7 @@ func routes(_ app: Application) throws {
     app.get("gamesupereasy") { req -> String in
         let partialBoard = Board(boardMode: BoardMode.superEasy)
         let gameID = GameID()
-        return stringGameID            
+        return String(gameID.createID(board: partialBoard))           
     }
 
     app.get("gameeasy") { req -> String in
