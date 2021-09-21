@@ -32,8 +32,27 @@ func routes(_ app: Application) throws {
         let boxIndex = Int(req.parameters.get("boxIndex")!)!
         let cellIndex = Int(req.parameters.get("cellIndex")!)!
         let partialBoard = runningGames[id]!
+        var num : Int?
+        if let numString = req.body.string {
 
-        runningGames[id] = partialBoard.alterBoard(num: 5, boxIndex: boxIndex, cellIndex: cellIndex)
+            if Int(numString) == nil {
+                return "Ensure that you pass an integer in the request body"
+            } 
+            else {
+                num = Int(numString)
+                if (num! < 1 || num! > 9) {
+                    return "Ensure that the inputted number is in between 1-9"
+                }
+            }
+        } else {
+            num = nil
+        }
+
+        if (partialBoard.canAlterTile(boxIndex: boxIndex, cellIndex: cellIndex)) {
+            runningGames[id] = partialBoard.alterBoard(num: num, boxIndex: boxIndex, cellIndex: cellIndex)
+        } else {
+            return "That tile is immutable"
+        }
         
         return "Worked"
     }
