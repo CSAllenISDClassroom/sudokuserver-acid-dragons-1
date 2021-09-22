@@ -22,17 +22,13 @@ public class Board{
         var randomArrayLine = [Tile]() //Initializing new array that will store randomized tiles
 
         for _ in (1 ... 9){
-
             let randomNumber = possibleNumbers.randomElement()! //Randomizes Numbers
             randomArrayLine.append(Tile(num: randomNumber, isMutable: false)) //Adds randomized number to new array
 
             for x in (0 ..< possibleNumbers.count){
-
                 if(possibleNumbers[x] == randomNumber){
-
                     possibleNumbers.remove(at: x) //Removes numbers that are already in new array so there are no duplicates in the randomized line
                     break
-
                 }
             }
         }

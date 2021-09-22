@@ -1,3 +1,4 @@
+
 import Vapor
 
 var runningGames = [Int: Board]()
@@ -10,24 +11,25 @@ func routes(_ app: Application) throws {
     app.get("hello") { req -> String in
         return("Hello, world!")
     }
-
-    app.post("games") { req -> String in
+    
+    app.post("games") {req -> [String : String] in 
         let partialBoard = Board(boardMode: BoardMode.superEasy)
-        let gameID = GameID.createID()
+        let gameID = GameID.createID(runningGames: runningGames)
         runningGames[gameID] = partialBoard
-        return String(gameID)
-    }
+        
+        return ["id" : String(gameID)]
+        }
 
 
     app.get("games", ":id", "cells") { req -> String in
         let id = Int(req.parameters.get("id")!)!
         let partialBoard = runningGames[id]!
         let response = partialBoard.getBoardString()
-       
-        return response                                     
+        
+        return response
     }
 
-    app.put("games", ":id", "cells", ":boxIndex", ":cellIndex") {req -> String in
+    app.put("games", ":id", "cells", ":boxIndex", ":cellIndex") {req -> Response in
         let id = Int(req.parameters.get("id")!)!
         let boxIndex = Int(req.parameters.get("boxIndex")!)!
         let cellIndex = Int(req.parameters.get("cellIndex")!)!
@@ -36,12 +38,12 @@ func routes(_ app: Application) throws {
         if let numString = req.body.string {
 
             if Int(numString) == nil {
-                return "Ensure that you pass an integer in the request body"
+                return Response(status: .badRequest, body: "Ensure that you pass an integer in the request body")
             } 
             else {
                 num = Int(numString)
                 if (num! < 1 || num! > 9) {
-                    return "Ensure that the inputted number is in between 1-9"
+                    return Response(status: .badRequest, body: "Ensure that the inputted number is in between 1-9")
                 }
             }
         } else {
@@ -51,10 +53,10 @@ func routes(_ app: Application) throws {
         if (partialBoard.canAlterTile(boxIndex: boxIndex, cellIndex: cellIndex)) {
             runningGames[id] = partialBoard.alterBoard(num: num, boxIndex: boxIndex, cellIndex: cellIndex)
         } else {
-            return "That tile is immutable"
+            return Response(status: .unauthorized, body: "That tile is immutable")
         }
-        
-        return "Worked"
+
+        return Response(status: .noContent, body: "")
     }
 
 /*    app.get("gamesupereasy") { req -> String in

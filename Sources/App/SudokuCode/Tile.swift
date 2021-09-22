@@ -2,8 +2,6 @@ public class Tile {
     
     private var num : Int? //Creating a new number variable to represent the number in a tile on the sudoku board
     private var mutable : Bool
-    private var boxIndex = 0
-    private var cellIndex = 0
     
     public init (num: Int?, isMutable: Bool) {
         self.num = num //Initializing the variables
@@ -33,15 +31,5 @@ public class Tile {
     public func getNumberString () -> String{
         if (num == nil) {return "-"}
         return String(num!)
-    }
-
-    public func setPosition(boxIndex: Int, cellIndex: Int) {
-        print("Setting Position: \(boxIndex)")
-        self.boxIndex = boxIndex
-        self.cellIndex = cellIndex
-    }
-
-    public func isPosition(boxIndex: Int, cellIndex: Int) -> Bool{
-        return self.boxIndex == boxIndex && self.cellIndex == cellIndex
     }
 }
