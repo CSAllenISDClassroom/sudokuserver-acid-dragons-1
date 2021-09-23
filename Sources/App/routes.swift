@@ -20,24 +20,23 @@ func routes(_ app: Application) throws {
         }
 
 
-    app.get("games", ":id", "cells") { req -> [String:String] in
+    app.get("games", ":id", "cells") { req -> Response in
         //        if req.parameters.get("id") != nil && Int(req.parameters.get("id")!) != nil
         guard let id = req.parameters.get("id"),
               let integerId = Int(id) else {
-            return HttpResponse.badRequest
+            return Response(status: .badRequest)
         }
         
         
         let id = Int(req.parameters.get("id")!)!
 
         guard GameID.checkID(runningGames: runningGames, idToCheck: id) else {
-            return "Cannot find board with given id"
+            return Response(status: .badRequest, body: "Cannot find board with given id")
         }
 
         let partialBoard = runningGames[id]!
-        let response = partialBoard.getBoardString()
-
-        return ["cells:" : response]
+        
+        return Response(status: .ok, body: partialBoard.getBoardString())
     }
 
     app.put("games", ":id", "cells", ":boxIndex", ":cellIndex") {req -> Response in
