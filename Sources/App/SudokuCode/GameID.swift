@@ -22,4 +22,12 @@ class GameID{
         
         return id
     }
+
+    public static func checkID(runningGames: [Int:Board], idToCheck: Int) -> Bool {
+        for (curID, _) in runningGames {
+            if curID == idToCheck {return true}
+        }
+
+        return false
+    }
 }

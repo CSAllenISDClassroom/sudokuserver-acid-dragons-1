@@ -85,7 +85,7 @@ public class Board{
             return Column(tiles: tiles)
         }
     }
-
+    
     private static func getBoxes(board: [[Tile]]) -> [Box] {
         var boxes = [Box]()
         for i in 0...8 { 
@@ -163,23 +163,18 @@ public class Board{
         
         return board
     }
-
+    
     public func canAlterTile(boxIndex: Int, cellIndex: Int) -> Bool {
         return boxes[boxIndex].getTile(cellIndex: cellIndex).isMutable()
     }
+
+    //Function that returns a board with an altered tile
     
     public func alterBoard(num: Int?, boxIndex: Int, cellIndex: Int) -> Board{
         boxes[boxIndex].setTile(num: num, cellIndex: cellIndex)
 
         return self
     }
-    
-    //Function that removes a tile from the board
-
-  //  private func removeTileFromLine(line: [Tile], offset: Int) -> [Tile]{
-//        var 
-//        return 
-  //  } 
     
     //Function that prints one line of the board as an array
     
@@ -197,13 +192,4 @@ public class Board{
         }
         return(tempString)
     }
-
-    // public func getBoardJSON() -> json {
-    //     var tempString = ""
-    //     for i in 0..<board.count {
-    //         tempString += getLineString(line: board[i])
-
-    //     }
-    //     return(json(tempString))
-    // }
 }

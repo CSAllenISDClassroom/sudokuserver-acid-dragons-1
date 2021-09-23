@@ -1,9 +1,8 @@
-
 import Vapor
 
-var runningGames = [Int: Board]()
-
 func routes(_ app: Application) throws {
+    var runningGames = [Int: Board]()
+
     app.get { req in
         return "It works!"
     }
@@ -21,12 +20,24 @@ func routes(_ app: Application) throws {
         }
 
 
-    app.get("games", ":id", "cells") { req -> String in
+    app.get("games", ":id", "cells") { req -> [String:String] in
+        //        if req.parameters.get("id") != nil && Int(req.parameters.get("id")!) != nil
+        guard let id = req.parameters.get("id"),
+              let integerId = Int(id) else {
+            return HttpResponse.badRequest
+        }
+        
+        
         let id = Int(req.parameters.get("id")!)!
+
+        guard GameID.checkID(runningGames: runningGames, idToCheck: id) else {
+            return "Cannot find board with given id"
+        }
+
         let partialBoard = runningGames[id]!
         let response = partialBoard.getBoardString()
-        
-        return response
+
+        return ["cells:" : response]
     }
 
     app.put("games", ":id", "cells", ":boxIndex", ":cellIndex") {req -> Response in
