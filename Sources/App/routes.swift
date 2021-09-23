@@ -12,7 +12,7 @@ func routes(_ app: Application) throws {
     }
     
     app.post("games") {req -> [String : String] in 
-        let partialBoard = Board(boardMode: BoardMode.superEasy)
+        let partialBoard = Board(boardDifficulty: BoardDifficulty.superEasy)
         let gameID = GameID.createID(runningGames: runningGames)
         runningGames[gameID] = partialBoard
         
@@ -23,20 +23,19 @@ func routes(_ app: Application) throws {
     app.get("games", ":id", "cells") { req -> Response in
         //        if req.parameters.get("id") != nil && Int(req.parameters.get("id")!) != nil
         guard let id = req.parameters.get("id"),
-              let integerId = Int(id) else {
+            let integerId = Int(id) else {
             return Response(status: .badRequest)
         }
         
-        
-        let id = Int(req.parameters.get("id")!)!
-
-        guard GameID.checkID(runningGames: runningGames, idToCheck: id) else {
+        // let id = Int(req.parameters.get("id")!)! 
+            
+        guard GameID.checkID(runningGames: runningGames, idToCheck: integerId) else {
             return Response(status: .badRequest, body: "Cannot find board with given id")
         }
 
-        let partialBoard = runningGames[id]!
+        let partialBoard = runningGames[integerId]!
         
-        return Response(status: .ok, body: partialBoard.getBoardString())
+        return Response(status: .ok, body: partialBoard.getBoardString())  //Error that I don't know how to fix ):
     }
 
     app.put("games", ":id", "cells", ":boxIndex", ":cellIndex") {req -> Response in
