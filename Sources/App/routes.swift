@@ -20,35 +20,37 @@ func routes(_ app: Application) throws {
         }
 
 
-    app.get("games", ":id", "cells") { req -> Response in
-        //        if req.parameters.get("id") != nil && Int(req.parameters.get("id")!) != nil
+    app.get("games", ":id", "cells") { req -> String in
         guard let id = req.parameters.get("id"),
             let integerId = Int(id) else {
-            return Response(status: .badRequest)
+            return "Bad Request"//Response(status: .badRequest)
+        }   
+        guard let partialBoard = runningGames[integerId] else {
+            return "Cannot find board with given ID"//Response(status: .badRequest, body: "Cannot find board with given id")
         }
-        
-        // let id = Int(req.parameters.get("id")!)! 
-            
-        guard GameID.checkID(runningGames: runningGames, idToCheck: integerId) else {
-            return Response(status: .badRequest, body: "Cannot find board with given id")
-        }
-
-        let partialBoard = runningGames[integerId]!
-        
-        return Response(status: .ok, body: partialBoard.getBoardString())  //Error that I don't know how to fix ):
+        return partialBoard.getBoardString()
     }
 
     app.put("games", ":id", "cells", ":boxIndex", ":cellIndex") {req -> Response in
-        let id = Int(req.parameters.get("id")!)!
-        let boxIndex = Int(req.parameters.get("boxIndex")!)!
-        let cellIndex = Int(req.parameters.get("cellIndex")!)!
-        let partialBoard = runningGames[id]!
+        guard let id = req.parameters.get("id"),
+              let intId = Int(id),
+              let boxIndex = req.parameters.get("boxIndex"),
+              let boxIndexInt = Int(boxIndex),
+              let cellIndex = req.parameters.get("cellIndex"),
+              let cellIndexInt = Int(cellIndex) else {
+            return Response(status: .badRequest)
+        }
+        
+        guard let partialBoard = runningGames[intId] else {
+            return Response(status: .badRequest, body: "Cannot find board with given id")
+        }
+        
         var num : Int?
         if let numString = req.body.string {
 
             if Int(numString) == nil {
                 return Response(status: .badRequest, body: "Ensure that you pass an integer in the request body")
-            } 
+            }
             else {
                 num = Int(numString)
                 if (num! < 1 || num! > 9) {
@@ -59,50 +61,11 @@ func routes(_ app: Application) throws {
             num = nil
         }
 
-        if (partialBoard.canAlterTile(boxIndex: boxIndex, cellIndex: cellIndex)) {
-            runningGames[id] = partialBoard.alterBoard(num: num, boxIndex: boxIndex, cellIndex: cellIndex)
-        } else {
+        guard (partialBoard.canAlterTile(boxIndex: boxIndexInt, cellIndex: cellIndexInt)) else {
             return Response(status: .unauthorized, body: "That tile is immutable")
         }
 
+        runningGames[intId] = partialBoard.alterBoard(num: num, boxIndex: boxIndexInt, cellIndex: cellIndexInt)
         return Response(status: .noContent, body: "")
     }
-
-/*    app.get("gamesupereasy") { req -> String in
-        let partialBoard = Board(boardMode: BoardMode.superEasy)
-        let gameID = GameID.createID()
-        sudokoGame[gameID] = partialBoard
-        return String(gameID)
-    }
-
-    app.get("gameeasy") { req -> String in
-        partialBoard = Board(boardMode: BoardMode.easy)
-        let gameID = GameID()
-        return String(gameID.createID(board: partialBoard))
-        }
-    
-    app.get("gamemedium") { req -> String in
-        let partialBoard = Board(boardMode: BoardMode.medium)
-        let gameID = GameID()
-        return String(gameID.createID(board: partialBoard))
-    }
-
-    app.get("gamehard") { req -> String in
-        let partialBoard = Board(boardMode: BoardMode.hard)
-        let gameID = GameID()
-        return String(gameID.createID(board: partialBoard))
-    }
-
-    app.get("gamesuperhard") { req -> String in
-        let partialBoard = Board(boardMode: BoardMode.superHard)
-        let gameID = GameID()
-        return String(gameID.createID(board: partialBoard))
-    }
-
-    app.get("gameimpossible") { req -> String in
-        let partialBoard = Board(boardMode: BoardMode.impossible)
-        let gameID = GameID()
-        return String(gameID.createID(board: partialBoard))
-    }
- */
 }
