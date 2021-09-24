@@ -80,7 +80,7 @@ func routes(_ app: Application) throws {
         partialBoard = Board(boardMode: BoardMode.easy)
         let gameID = GameID()
         return String(gameID.createID(board: partialBoard))
-    }
+        }
     
     app.get("gamemedium") { req -> String in
         let partialBoard = Board(boardMode: BoardMode.medium)
@@ -104,5 +104,6 @@ func routes(_ app: Application) throws {
         let partialBoard = Board(boardMode: BoardMode.impossible)
         let gameID = GameID()
         return String(gameID.createID(board: partialBoard))
-    }*/
+    }
+ */
 }
