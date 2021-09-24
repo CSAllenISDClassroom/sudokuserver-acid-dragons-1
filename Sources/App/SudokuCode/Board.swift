@@ -2,17 +2,17 @@ public class Board{
 
     let solutionBoard : [[Tile]] //Creating solution board variable of type 2D Tile array
     var board : [[Tile]] //Creating partial board variable of type 2D Tile array
-    var boxes : [Box]
-    var rows : [Row]
-    var columns : [Column]
+    var boxes : [Box]//Creating boxes for the board
+    var rows : [Row]// Creating rows for the board
+    var columns : [Column]//Creating columns for the board
 
     
     public init(boardDifficulty: BoardDifficulty){
         solutionBoard = Board.createBoard() // Initializing solution board
         board = Board.partalizeBoard(board: solutionBoard, boardDifficulty: boardDifficulty) //Initializing partial board
-        boxes = Board.getBoxes(board: board)
-        rows = Board.getRows(board: board)
-        columns = Board.getColumns(board: board)
+        boxes = Board.getBoxes(board: board)//Initializing boxes
+        rows = Board.getRows(board: board)//Initializing rows
+        columns = Board.getColumns(board: board)//Initializing columns
     }
 
     //Function That Creates a New Line With Randomized Numbers from 1-9. Returns the Line as a Tile for future implementations
@@ -25,7 +25,7 @@ public class Board{
             let randomNumber = possibleNumbers.randomElement()! //Randomizes Numbers
             randomArrayLine.append(Tile(num: randomNumber, isMutable: false)) //Adds randomized number to new array
 
-            for x in (0 ..< possibleNumbers.count){
+            for x in (0 ..< possibleNumbers.count){//Going through every possible numbers
                 if(possibleNumbers[x] == randomNumber){
                     possibleNumbers.remove(at: x) //Removes numbers that are already in new array so there are no duplicates in the randomized line
                     break
@@ -44,22 +44,22 @@ public class Board{
         
         switch (boardDifficulty) {
         case .superEasy:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 3)
+            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 3)//Remove 3 tiles from each line of the board
             break
         case .easy:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 4)
+            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 4)//Remove 4 tiles frome each lines of the board 
             break
         case .medium:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 5)
+            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 5)//Remove 5 tiles from each lines of the board
             break
         case .hard:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 6)
+            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 6)//Remove 6 tiles from each lines of the board
             break
         case .superHard:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 7)
+            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 7)//Remove 7 tiles from each lines of the board
             break
         case .impossible:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 8)
+            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 8)//Remove 8 tiles from each lines of the board
             break
         }
 
@@ -141,7 +141,7 @@ public class Board{
         var shiftedArray = originalArray //Creats a New array that will shift the numbers
 
         for x in (0 ..< shift){
-            shiftedArray.append(originalArray[x]) //Adds number to array and removes the number from the beginning to create a shift in the values in the array
+            shiftedArray.append(originalArray[x]) //Adds number to array at the end and removes the number from the beginning to create a shift in the values in the array
             shiftedArray.remove(at:0)
         }
 
