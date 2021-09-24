@@ -12,7 +12,7 @@ func routes(_ app: Application) throws {
     }
     
     app.post("games") {req -> [String : String] in 
-        let partialBoard = Board(boardDifficulty: BoardDifficulty.superEasy)
+         let partialBoard = Board(boardDifficulty: BoardDifficulty.superEasy)
         let gameID = GameID.createID(runningGames: runningGames)
         runningGames[gameID] = partialBoard
         
