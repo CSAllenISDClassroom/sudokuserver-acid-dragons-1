@@ -11,9 +11,9 @@ func routes(_ app: Application) throws {
         return("Hello, world!")
     }
     
-    app.post("games") {req -> [String : String] in 
+    app.post("games") {req -> [String : String] in
         let partialBoard = Board(boardDifficulty: BoardDifficulty.superEasy)
-        let gameID = GameID.createID(runningGames: runningGames) //server is creating a Game Id
+        let gameID = GameID.createID(runningGames: runningGames) //Server is creating a Game Id
         runningGames[gameID] = partialBoard
         
         return ["id" : String(gameID)]

@@ -7,7 +7,7 @@ class GameID{
     private static func generateRandomInt() -> Int {
         return Int.random(in: 1 ... Int.max)
     }
-    
+    // Returns any Possible Number for possible IDs
     public static func createID(runningGames: [Int:Board]) -> Int{
         var curIDs = [Int]()
         for (curID, _) in runningGames {
