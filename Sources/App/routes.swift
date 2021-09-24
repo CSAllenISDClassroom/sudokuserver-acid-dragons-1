@@ -13,7 +13,7 @@ func routes(_ app: Application) throws {
     
     app.post("games") {req -> [String : String] in 
         let partialBoard = Board(boardDifficulty: BoardDifficulty.superEasy)
-        let gameID = GameID.createID(runningGames: runningGames)
+        let gameID = GameID.createID(runningGames: runningGames) //server is creating a Game Id
         runningGames[gameID] = partialBoard
         
         return ["id" : String(gameID)]
@@ -21,7 +21,7 @@ func routes(_ app: Application) throws {
 
 
     app.get("games", ":id", "cells") { req -> String in
-        guard let id = req.parameters.get("id"),
+        guard let id = req.parameters.get("id"), //client will later use to retrieve the running partial board
             let integerId = Int(id) else {
             return "Bad Request"//Response(status: .badRequest)
         }   
@@ -47,7 +47,7 @@ func routes(_ app: Application) throws {
         
         var num : Int?
         if let numString = req.body.string {
-
+            // Making sure that the number put in the body is in scope between 1-9
             if Int(numString) == nil {
                 return Response(status: .badRequest, body: "Ensure that you pass an integer in the request body")
             }
