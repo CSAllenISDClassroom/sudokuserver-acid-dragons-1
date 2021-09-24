@@ -1,82 +1,70 @@
 import Vapor
 
-var runningGames = [Int: Board]() //Keeps track of all the active games currently running
-
 func routes(_ app: Application) throws {
-    app.get { req in //Basic get request. Starts when server is running
+    var runningGames = [Int: Board]()
+
+    app.get { req in
         return "It works!"
     }
 
     app.get("hello") { req -> String in //With parameter of hello, a get request will happen
         return("Hello, world!")
-    }
-
-    app.post("games") { req -> String in
-        let partialBoard = Board(boardMode: BoardMode.superEasy) //Creating a partial board object
-        let gameID = GameID.createID() //Creates a game ID object
-        runningGames[gameID] = partialBoard //Assigns the partial board to the gameID
-        return String(gameID) //Returns the GameID as a string
-    }
+    }    
+    app.post("games") {req -> [String : String] in 
+        let partialBoard = Board(boardDifficulty: BoardDifficulty.superEasy)
+        let gameID = GameID.createID(runningGames: runningGames)
+        runningGames[gameID] = partialBoard
+        
+        return ["id" : String(gameID)]
+        }
 
 
     app.get("games", ":id", "cells") { req -> String in
-        let id = Int(req.parameters.get("id")!)! //Stores the ID parameter in the URL
-        let partialBoard = runningGames[id]!
-        let response = partialBoard.getBoardString() //Creates the server response to the get request
-        
-        return response //returns the response
+        guard let id = req.parameters.get("id"),
+            let integerId = Int(id) else {
+            return "Bad Request"//Response(status: .badRequest)
+        }   
+        guard let partialBoard = runningGames[integerId] else {
+            return "Cannot find board with given ID"//Response(status: .badRequest, body: "Cannot find board with given id")
+        }
+        return partialBoard.getBoardString()
     }
 
-    app.put("games", ":id", "cells", ":boxIndex", ":cellIndex") {req -> String in
-        let id = Int(req.parameters.get("id")!)! //Stores the ID parameter giving in URL
-        let boxIndex = Int(req.parameters.get("boxIndex")!)! //Stores the Box index parameter given in URL
-        let cellIndex = Int(req.parameters.get("cellIndex")!)! //Stores the Cell index parameter given in URL
-        let partialBoard = runningGames[id]!
-
-        runningGames[id] = partialBoard.alterBoard(num: 5, boxIndex: boxIndex, cellIndex: cellIndex) //Changes the board based on box index and cell
-                                                                                                     //index
+    app.put("games", ":id", "cells", ":boxIndex", ":cellIndex") {req -> Response in
+        guard let id = req.parameters.get("id"),
+              let intId = Int(id),
+              let boxIndex = req.parameters.get("boxIndex"),
+              let boxIndexInt = Int(boxIndex),
+              let cellIndex = req.parameters.get("cellIndex"),
+              let cellIndexInt = Int(cellIndex) else {
+            return Response(status: .badRequest)
+        }
         
-        return "Worked" //Returns generic server response
+        guard let partialBoard = runningGames[intId] else {
+            return Response(status: .badRequest, body: "Cannot find board with given id")
+        }
+        
+        var num : Int?
+        if let numString = req.body.string {
+
+            if Int(numString) == nil {
+                return Response(status: .badRequest, body: "Ensure that you pass an integer in the request body")
+            }
+            else {
+                num = Int(numString)
+                if (num! < 1 || num! > 9) {
+                    return Response(status: .badRequest, body: "Ensure that the inputted number is in between 1-9")
+                }
+            }
+        } else {
+            num = nil
+        }
+
+        guard (partialBoard.canAlterTile(boxIndex: boxIndexInt, cellIndex: cellIndexInt)) else {
+            return Response(status: .unauthorized, body: "That tile is immutable")
+        }
+
+        runningGames[intId] = partialBoard.alterBoard(num: num, boxIndex: boxIndexInt, cellIndex: cellIndexInt)
+        return Response(status: .noContent, body: "")
     }
-
-    //////////////////////////////////////////////////////////////////////
-    //UNUSED CODE
-    //////////////////////////////////////////////////////////////////////
-
-    // app.get("gamesupereasy") { req -> String in
-    //     let partialBoard = Board(boardMode: BoardMode.superEasy)
-    //     let gameID = GameID.createID()
-    //     sudokoGame[gameID] = partialBoard
-    //     return String(gameID)
-    // }
-
-    // app.get("gameeasy") { req -> String in
-    //     partialBoard = Board(boardMode: BoardMode.easy)
-    //     let gameID = GameID()
-    //     return String(gameID.createID(board: partialBoard))
-    // }
-    
-    // app.get("gamemedium") { req -> String in
-    //     let partialBoard = Board(boardMode: BoardMode.medium)
-    //     let gameID = GameID()
-    //     return String(gameID.createID(board: partialBoard))
-    // }
-
-    // app.get("gamehard") { req -> String in
-    //     let partialBoard = Board(boardMode: BoardMode.hard)
-    //     let gameID = GameID()
-    //     return String(gameID.createID(board: partialBoard))
-    // }
-
-    // app.get("gamesuperhard") { req -> String in
-    //     let partialBoard = Board(boardMode: BoardMode.superHard)
-    //     let gameID = GameID()
-    //     return String(gameID.createID(board: partialBoard))
-    // }
-
-    // app.get("gameimpossible") { req -> String in
-    //     let partialBoard = Board(boardMode: BoardMode.impossible)
-    //     let gameID = GameID()
-    //     return String(gameID.createID(board: partialBoard))
-    //}
 }
