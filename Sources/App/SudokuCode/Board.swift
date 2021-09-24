@@ -7,9 +7,9 @@ public class Board{
     var columns : [Column]
 
     
-    public init(boardMode: BoardMode){
+    public init(boardDifficulty: BoardDifficulty){
         solutionBoard = Board.createBoard() // Initializing solution board
-        board = Board.partalizeBoard(board: solutionBoard, boardMode: boardMode) //Initializing partial board
+        board = Board.partalizeBoard(board: solutionBoard, boardDifficulty: boardDifficulty) //Initializing partial board
         boxes = Board.getBoxes(board: board)
         rows = Board.getRows(board: board)
         columns = Board.getColumns(board: board)
@@ -37,12 +37,12 @@ public class Board{
         
     }
 
-    private static func partalizeBoard(board: [[Tile]], boardMode: BoardMode) -> [[Tile]]{
+    private static func partalizeBoard(board: [[Tile]], boardDifficulty: BoardDifficulty) -> [[Tile]]{
         //Switch case to choose how many tiles to remove from each line of the board (As per rules) for each difficulty
 
         var curBoard = [[Tile]]()
         
-        switch (boardMode) {
+        switch (boardDifficulty) {
         case .superEasy:
             curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 3)
             break
