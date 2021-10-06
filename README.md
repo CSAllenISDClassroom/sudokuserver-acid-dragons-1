@@ -1,4 +1,4 @@
-Team Members: Tariq Mahamid
+Team Members: Tariq Mahamid, Sahil Sheth, Anish Saravanan, Grayson Smith, Amy Pham
 
 Our API Uses a couple different requests: 
 GET - Retrieve data
