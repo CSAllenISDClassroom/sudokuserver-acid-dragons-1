@@ -1,4 +1,17 @@
 import Vapor
+import Foundation
+
+struct ID : Codable {
+    let id : Int
+}
+
+struct BoardCodable : Codable {
+    let board : String
+}
+
+struct UserInput : Codable {
+    let value : Int
+}
 
 func routes(_ app: Application) throws {
     var runningGames = [Int: Board]()
@@ -11,13 +24,21 @@ func routes(_ app: Application) throws {
         return("Hello, world!")
     }
     
-    app.post("games") {req -> [String : String] in
+    app.post("games") {req -> String in
         let partialBoard = Board(boardDifficulty: BoardDifficulty.superEasy)
         let gameID = GameID.createID(runningGames: runningGames) //Server is creating a Game Id
         runningGames[gameID] = partialBoard
+
+        let id = ID(id: gameID)
+        let encoder = JSONEncoder()
         
-        return ["id" : String(gameID)]
-        }
+        guard let data = try? encoder.encode(id),
+              let string = String(data: data, encoding: .utf8) else {
+            fatalError("Failed to encode ID to JSON")
+        } 
+        
+        return string
+    }
 
 
     app.get("games", ":id", "cells") { req -> String in
@@ -28,7 +49,16 @@ func routes(_ app: Application) throws {
         guard let partialBoard = runningGames[integerId] else {
             return "Cannot find board with given ID"//Response(status: .badRequest, body: "Cannot find board with given id")
         }
-        return partialBoard.getBoardString()
+
+        let boardCodable = BoardCodable(board: partialBoard.getBoardString())
+        let encoder = JSONEncoder()
+        
+        guard let data = try? encoder.encode(boardCodable),
+              let string = String(data: data, encoding: .utf8) else {
+            fatalError("Failed to encode Board to JSON")
+        } 
+        
+        return string
     }
 
     app.put("games", ":id", "cells", ":boxIndex", ":cellIndex") {req -> Response in
@@ -40,23 +70,32 @@ func routes(_ app: Application) throws {
               let cellIndexInt = Int(cellIndex) else {
             return Response(status: .badRequest)
         }
+
+        guard ((boxIndexInt >= 0 && boxIndexInt < 9) && (cellIndexInt >= 0 && cellIndexInt < 9)) else {
+            return Response(status: .badRequest, body: "Please Provide a valud box and cell index")
+        }
         
         guard let partialBoard = runningGames[intId] else {
             return Response(status: .badRequest, body: "Cannot find board with given id")
         }
         
         var num : Int?
-        if let numString = req.body.string {
-            // Making sure that the number put in the body is in scope between 1-9
-            if Int(numString) == nil {
+        if let userInput = req.body.string {
+            let jsonData = userInput.data(using: .utf8)!
+
+            guard let value : Int? = try JSONDecoder().decode(UserInput.self, from: jsonData).value else {
+                return Response(status: .badRequest)
+            }
+
+            guard let unwrappedVal = value else {
                 return Response(status: .badRequest, body: "Ensure that you pass an integer in the request body")
             }
-            else {
-                num = Int(numString)
-                if (num! < 1 || num! > 9) {
-                    return Response(status: .badRequest, body: "Ensure that the inputted number is in between 1-9")
-                }
+            
+            guard (unwrappedVal > 0 && unwrappedVal < 10) else {
+                return Response(status: .badRequest, body: "Ensure that the inputted number is in between 1-9")
             }
+            
+            num = unwrappedVal
         } else {
             num = nil
         }
