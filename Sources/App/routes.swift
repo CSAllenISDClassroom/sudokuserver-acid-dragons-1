@@ -25,10 +25,14 @@ func routes(_ app: Application) throws {
     }
     
     app.post("games") {req -> String in
-        let partialBoard = Board(boardDifficulty: BoardDifficulty.superEasy)
+        guard let difficulty = req.parameters.get("difficulty") else {//req.query[String.self, at: "difficulty"] else {
+            return "Parameter difficulty required"
+        }
+        
+        let partialBoard = Board(boardDifficulty: difficulty)
         let gameID = GameID.createID(runningGames: runningGames) //Server is creating a Game Id
         runningGames[gameID] = partialBoard
-
+        
         let id = ID(id: gameID)
         let encoder = JSONEncoder()
         
