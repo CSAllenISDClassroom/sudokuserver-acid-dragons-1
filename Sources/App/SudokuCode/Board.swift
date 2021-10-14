@@ -7,7 +7,7 @@ public class Board{
     var columns : [Column]
 
     
-    public init(boardDifficulty: BoardDifficulty){
+    public init(boardDifficulty: BoardDifficulty, filter: Filter){
         solutionBoard = Board.createBoard() // Initializing solution board
         board = Board.partalizeBoard(board: solutionBoard, boardDifficulty: boardDifficulty) //Initializing partial board
         boxes = Board.getBoxes(board: board)
@@ -64,6 +64,22 @@ public class Board{
         }
 
         return curBoard
+    }
+
+    private static func filterBoard(board: [[Tile]], boardDifficulty: BoardDifficulty, filter: Filter) -> [[Tile]]{
+        var currentBoard = [[Tile]]()
+
+        switch (filter){
+        case .all:
+            currentBoard = partalizeBoard(board: board, boardDifficulty: boardDifficulty)
+            break
+        case .repeated:
+            print("repeated")
+        case .incorrect:
+            print("incorrect")
+        }
+
+        return currentBoard
     }
     
     private static func getRows (board: [[Tile]]) -> [Row] {
