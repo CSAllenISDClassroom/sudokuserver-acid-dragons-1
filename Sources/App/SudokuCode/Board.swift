@@ -79,6 +79,22 @@ public class Board{
 
         return curBoard
     }
+
+    private static func filterBoard(board: [[Tile]], boardDifficulty: BoardDifficulty, filter: Filter) -> [[Tile]]{
+        var currentBoard = [[Tile]]()
+
+        switch (filter){
+        case .all:
+            currentBoard = partalizeBoard(board: board, boardDifficulty: boardDifficulty)
+            break
+        case .repeated:
+            print("repeated")
+        case .incorrect:
+            print("incorrect")
+        }
+
+        return currentBoard
+    }
     
     private static func getRows (board: [[Tile]]) -> [Row] {
         return board.map{ (tiles: [Tile]) -> Row in
