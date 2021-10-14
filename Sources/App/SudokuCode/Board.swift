@@ -7,7 +7,7 @@ public class Board{
     var columns : [Column]
 
     
-    public init(boardDifficulty: BoardDifficulty, filter: Filter){
+    public init(boardDifficulty: BoardDifficulty){
         solutionBoard = Board.createBoard() // Initializing solution board
         board = Board.partalizeBoard(board: solutionBoard, boardDifficulty: boardDifficulty) //Initializing partial board
         boxes = Board.getBoxes(board: board)
