@@ -5,16 +5,30 @@ public class Board{
     var boxes : [Box]
     var rows : [Row]
     var columns : [Column]
-
     
-    public init(boardDifficulty: BoardDifficulty){
+    public init(boardDifficulty: String){
         solutionBoard = Board.createBoard() // Initializing solution board
-        board = Board.partalizeBoard(board: solutionBoard, boardDifficulty: boardDifficulty) //Initializing partial board
+        board = Board.partalizeBoard(board: solutionBoard, boardDifficulty: Board.getBoardDifficulty(boardDifficulty: boardDifficulty)) //Initializing partial board
         boxes = Board.getBoxes(board: board)
         rows = Board.getRows(board: board)
         columns = Board.getColumns(board: board)
     }
 
+    public static func getBoardDifficulty(boardDifficulty: String) -> BoardDifficulty {
+        switch (boardDifficulty) {
+        case "easy":
+            return BoardDifficulty.superEasy
+        case "medium":
+            return BoardDifficulty.medium
+        case "hard":
+            return BoardDifficulty.hard
+        case "hell":
+            return BoardDifficulty.impossible
+        default:
+            return BoardDifficulty.easy
+        }
+    }
+    
     //Function That Creates a New Line With Randomized Numbers from 1-9. Returns the Line as a Tile for future implementations
     
     private static func createRandomLine() -> [Tile]{        
