@@ -24,7 +24,7 @@ func routes(_ app: Application) throws {
     }
     
     app.post("games") {req -> String in
-        guard let difficulty = req.parameters.get("difficulty") else {//req.query[String.self, at: "difficulty"] else {
+        guard let difficulty = req.query[String.self, at: "difficulty"] else {
             return "Parameter difficulty required"
         }
         
