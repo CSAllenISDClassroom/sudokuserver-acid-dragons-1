@@ -30,4 +30,5 @@ class GameID{
 
         return false
     }
+    //This Returns ID for routes.swift or false statement in order to prevent errors from appaearing too frequently
 }
