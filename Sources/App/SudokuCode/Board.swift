@@ -80,13 +80,12 @@ public class Board{
         return curBoard
     }
 
-    private static func filterBoard(board: [[Tile]], boardDifficulty: BoardDifficulty, filter: Filter) -> [[Tile]]{
-        var currentBoard = [[Tile]]()
+    private static func filterBoard(board: [[Tile]], boardDifficulty: BoardDifficulty, filter: Filter) -> Board{
+        var currentBoard = self
 
         switch (filter){
         case .all:
-            currentBoard = partalizeBoard(board: board, boardDifficulty: boardDifficulty)
-            break
+            return self
         case .repeated:
             print("repeated")
         case .incorrect:
