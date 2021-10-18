@@ -93,9 +93,8 @@ func routes(_ app: Application) throws {
         if let userInput = req.body.string {
             let jsonData = userInput.data(using: .utf8)!
 
-            guard let value : Int? = try JSONDecoder().decode(UserInput.self, from: jsonData).value else {
-                return Response(status: .badRequest)
-            }
+            let value : Int? = try JSONDecoder().decode(UserInput.self, from: jsonData).value
+                
 
             guard let unwrappedVal = value else {
                 return Response(status: .badRequest, body: "Ensure that you pass an integer in the request body")
