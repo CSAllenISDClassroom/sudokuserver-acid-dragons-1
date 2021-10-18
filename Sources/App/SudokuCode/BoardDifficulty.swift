@@ -1,6 +1,6 @@
 //Creating an enum with all the different difficulties possible
 
-public enum BoardMode {
+public enum BoardDifficulty {
     case superEasy
     case easy
     case medium
