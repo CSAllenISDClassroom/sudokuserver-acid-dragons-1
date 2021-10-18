@@ -49,7 +49,10 @@ func routes(_ app: Application) throws {
         guard let partialBoard = runningGames[integerId] else {
             return "Cannot find board with given ID"//Response(status: .badRequest, body: "Cannot find board with given id")
         }
-
+        guard let filter = req.query[String.self, at: "filter"] else {
+            return "Filter Required"
+        }
+        
         let boardCodable = BoardCodable(board: partialBoard)
         let encoder = JSONEncoder()
         
