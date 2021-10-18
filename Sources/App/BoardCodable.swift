@@ -1,12 +1,11 @@
 import Foundation
 
-let board = Board()
 let encoder = JSONEncoder()
 
-guard let data = try? encoder.encode(board),
+/*guard let data = try? encoder.encode(board),
       let json = String(data: data, encoding: .utf8) else {
     fatalError("Failed to encode data into json.")
-}
+}*/
 
 // Structure definitions
 struct PositionCodable: Codable {
@@ -15,17 +14,17 @@ struct PositionCodable: Codable {
 }
 
 struct CellCodable: Codable {
-    let position: Position
+    let position: PositionCodable
     let value: Int?
 }
 
 struct BoxCodable: Codable {
     let cells: [CellCodable]
 
-    init(boxIndex: Int) {
+    init(boxIndex: Int, row: Row) {
         var cells = [CellCodable]()
         for cellIndex in 0 ..< 9 {
-            cells.append(CellCodable(position: PositionCodable(boxIndex: boxIndex, cellIndex: cellIndex), value: cellIndex))
+            cells.append(CellCodable(position: PositionCodable(boxIndex: boxIndex, cellIndex: cellIndex), value: row.getTile(cellIndex: cellIndex).getNumber()))
         }
         self.cells = cells
     }
@@ -34,11 +33,11 @@ struct BoxCodable: Codable {
 struct BoardCodable: Codable {
     let board: [BoxCodable]
     
-    init() {
-        var board = [BoxCodable]()
+    init(board: Board) {
+        var boxCodable = [BoxCodable]()
         for boxIndex in 0 ..< 9 {
-            board.append(BoxCodable(boxIndex: boxIndex))
+            boxCodable.append(BoxCodable(boxIndex: boxIndex, row:board.rows[boxIndex]))
         }
-        self.board = board
+        self.board = boxCodable
     }
 }
