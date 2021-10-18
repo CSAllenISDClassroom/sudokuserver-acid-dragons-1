@@ -33,10 +33,10 @@ struct BoxCodable: Codable {
 struct BoardCodable: Codable {
     let board: [BoxCodable]
     
-    init(board: Board) {
+    init(board: [[Tile]]) {
         var boxCodable = [BoxCodable]()
         for boxIndex in 0 ..< 9 {
-            boxCodable.append(BoxCodable(boxIndex: boxIndex, row:board.rows[boxIndex]))
+            boxCodable.append(BoxCodable(boxIndex: boxIndex, row: Board.getRows(board: board)[boxIndex]))
         }
         self.board = boxCodable
     }

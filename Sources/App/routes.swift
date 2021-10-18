@@ -53,7 +53,7 @@ func routes(_ app: Application) throws {
             return "Filter Required"
         }
         
-        let boardCodable = BoardCodable(board: partialBoard)
+        let boardCodable = BoardCodable(board: partialBoard.board)
         let encoder = JSONEncoder()
         
         guard let data = try? encoder.encode(boardCodable),

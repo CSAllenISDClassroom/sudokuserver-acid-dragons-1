@@ -1,4 +1,4 @@
-class Group  { //Using a class to be able to use inheritance for the Box.swift, Tile.swift, Row.swift, Column.swift instead of repeating code
+public class Group  { //Using a class to be able to use inheritance for the Box.swift, Tile.swift, Row.swift, Column.swift instead of repeating code
     private var tiles : [Tile]
     
     public init(tiles: [Tile]) {
