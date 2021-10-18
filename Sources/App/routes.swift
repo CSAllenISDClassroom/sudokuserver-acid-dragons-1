@@ -5,10 +5,6 @@ struct ID : Codable {
     let id : Int
 }
 
-struct BoardCodable : Codable {
-    let board : String
-}
-
 struct UserInput : Codable {
     let value : Int
 }
@@ -54,7 +50,7 @@ func routes(_ app: Application) throws {
             return "Cannot find board with given ID"//Response(status: .badRequest, body: "Cannot find board with given id")
         }
 
-        let boardCodable = BoardCodable(board: partialBoard.getBoardString())
+        let boardCodable = BoardCodable(board: partialBoard)
         let encoder = JSONEncoder()
         
         guard let data = try? encoder.encode(boardCodable),
