@@ -1,9 +1,9 @@
 import Vapor
 import Foundation
 
-<<<<<<< HEAD
+
 let partialBoard = Board(boardMode: BoardMode.superEasy)
-=======
+
 struct ID : Codable {
     let id : Int
 }
@@ -11,7 +11,6 @@ struct ID : Codable {
 struct UserInput : Codable {
     let value : Int
 }
->>>>>>> 160e4c9aa66cb55758cb579df3ba0f7bc2a5ac8d
 
 func routes(_ app: Application) throws {
     var runningGames = [Int: Board]()
@@ -45,10 +44,10 @@ func routes(_ app: Application) throws {
     }
 
 
-<<<<<<< HEAD
+
     app.get("boardeasy") { req -> String in
         return partialBoard.getBoardString()
-=======
+    }
     app.get("games", ":id", "cells") { req -> String in
         guard let id = req.parameters.get("id"), //client will later use to retrieve the running partial board
             let integerId = Int(id) else {
@@ -114,6 +113,5 @@ func routes(_ app: Application) throws {
 
         runningGames[intId] = partialBoard.alterBoard(num: num, boxIndex: boxIndexInt, cellIndex: cellIndexInt)
         return Response(status: .noContent, body: "")
->>>>>>> 160e4c9aa66cb55758cb579df3ba0f7bc2a5ac8d
     }
 }
