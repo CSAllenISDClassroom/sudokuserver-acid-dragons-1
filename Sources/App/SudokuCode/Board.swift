@@ -80,12 +80,12 @@ public class Board{
         return curBoard
     }
 
-    private static func filterBoard(board: [[Tile]], boardDifficulty: BoardDifficulty, filter: Filter) -> Board{
-        var currentBoard = self
+    private static func filterBoard(board: [[Tile]], boardDifficulty: BoardDifficulty, filter: Filter) -> [[Tile]]{
+        var currentBoard = board
 
         switch (filter){
         case .all:
-            return self
+            return board
         case .repeated:
             print("repeated")
         case .incorrect:
@@ -95,7 +95,7 @@ public class Board{
         return currentBoard
     }
     
-    private static func getRows (board: [[Tile]]) -> [Row] {
+    public static func getRows (board: [[Tile]]) -> [Row] {
         return board.map{ (tiles: [Tile]) -> Row in
             return Row(tiles: tiles)
         }
