@@ -75,7 +75,7 @@ func routes(_ app: Application) throws {
         }
 
         guard ((boxIndexInt >= 0 && boxIndexInt < 9) && (cellIndexInt >= 0 && cellIndexInt < 9)) else {
-            return Response(status: .badRequest, body: "Please Provide a valud box and cell index")
+            return Response(status: .badRequest, body: "Please Provide a valid box and cell index. Box Index and Cell index must be between 0-8")
         }
         
         guard let partialBoard = runningGames[intId] else {
