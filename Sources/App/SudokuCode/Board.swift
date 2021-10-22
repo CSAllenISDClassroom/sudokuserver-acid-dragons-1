@@ -95,9 +95,101 @@ public class Board{
         return currentBoard
     }
 
+    // private static func checkIncorrect(solutionBoard: [[Tile]], partializeBoard: [[Tile]]) -> [Tile]{
+    //     let solutionRows = getRows(board:solutionBoard)
+    //     let partializeRows = getRows(board:board)
+    //     var incorrectTiles = [Tile]
+
+    //     for x in (0 ... 9){
+    //         if(partializeRow[x] = nil){
+    //             continue
+    //         }
+    //         else{                
+    //             if(partializeRow[x] == solutionRow[x]){
+    //                 //tile is correct
+    //                 continue
+    //             }
+    //             else{
+    //                 //tile is wrong
+    //                 incorrectTiles.append(partializeRow[x])
+    //             }
+    //         }
+    //     }
+
+    //     return incorrectTiles
+    // }
+
+    // private static func checkRepeatedRow(solutionBoard: [[Tile]], partializeBoard: [[Tile]]) -> [Tile]{
+    //     let solutionRows = getRows(board:solutionBoard)
+    //     let partializeRows = getRows(board:board)
+    //     var repeatedTiles = [Tile]
+
+    //     for x in (0 ... 9){
+    //         if(partializeRow[x] = nil){
+    //             continue
+    //         }
+    //         else{                
+    //             if(partializeRow[x] == solutionRow[x]){
+    //                 repeatedTiles.append(partializeRow[x])
+    //             }
+    //             else{
+    //                 continue
+    //             }
+    //         }
+    //     }
+
+    //     return repeatedTiles
+    // }
+
+    // private static func checkRepeatedColumn(solutionBoard: [[Tile]], partializeBoard: [[Tile]]) -> [Tile]{
+    //     let solutionColumn = getColumns(board:solutionBoard)
+    //     let partializeColumn = getColumns(board:board)
+    //     var repeatedTiles = [Tile]
+
+    //     for x in (0 ... 9){
+    //         if(partializeColumn[x] = nil){
+    //             continue
+    //         }
+    //         else{                
+    //             if(partializeColumn[x] == solutionColumn[x]){
+    //                 repeatedTiles.append(partializeColumn[x])
+    //             }
+    //             else{
+    //                 continue
+    //             }
+    //         }
+    //     }
+
+    //     return repeatedTiles
+    // }
+
+    // private static func checkRepeatedBox(solutionBoard: [[Tile]], partializeBoard: [[Tile]]) -> [Tile]{
+    //     let solutionBox = getBoxes(board:solutionBoard)
+    //     let partializeBox = getBoxes(board:board)
+    //     var repeatedTiles = [Tile]
+
+    //     for x in (0 ... 9){
+    //         if(partializeBox[x] = nil){
+    //             continue
+    //         }
+    //         else{                
+    //             if(partializeBox[x] == solutionBox[x]){
+    //                 repeatedTiles.append(partializeBox[x])
+    //             }
+    //             else{
+    //                 continue
+    //             }
+    //         }
+    //     }
+
+    //     return repeatedTiles
+    // }
+
+    
+
     //Function to get the rows from the board
     
-    public static func getRows (board: [[Tile]]) -> [Row] {
+    private static func getRows (board: [[Tile]]) -> [Row] {
         return board.map{ (tiles: [Tile]) -> Row in
             return Row(tiles: tiles)
         }
