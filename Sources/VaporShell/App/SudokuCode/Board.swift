@@ -17,15 +17,15 @@ public class Board{
     public static func getBoardDifficulty(boardDifficulty: String) -> BoardDifficulty {
         switch (boardDifficulty) {
         case "easy":
-            return BoardDifficulty.superEasy
+            return BoardDifficulty.easy
         case "medium":
             return BoardDifficulty.medium
         case "hard":
             return BoardDifficulty.hard
         case "hell":
-            return BoardDifficulty.impossible
+            return BoardDifficulty.hell
         default:
-            return BoardDifficulty.easy
+            fatalError("400 Bad Error")
         }
     }
     
@@ -57,9 +57,6 @@ public class Board{
         var curBoard = [[Tile]]()
         
         switch (boardDifficulty) {
-        case .superEasy:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 3)
-            break
         case .easy:
             curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 4)
             break
@@ -69,10 +66,7 @@ public class Board{
         case .hard:
             curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 6)
             break
-        case .superHard:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 7)
-            break
-        case .impossible:
+        case .hell:
             curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 8)
             break
         }
