@@ -25,7 +25,7 @@ public class Board{
         case "hell":
             return BoardDifficulty.hell
         default:
-            fatalError("400 Bad Error")
+            return BoardDifficulty.easy
         }
     }
     
