@@ -20,48 +20,54 @@ func routes(_ app: Application) throws {
         return("Hello, world!")
     }
     
-    app.post("games") {req -> String in
+    app.post("games") {req -> Response in
         guard let difficulty = req.query[String.self, at: "difficulty"] else {
-            return "Parameter difficulty required"
+            return Response(status :.badRequest, body: "Difficulty Parameter Required")
         }
-        
+
         let partialBoard = Board(boardDifficulty: difficulty)
         let gameID = GameID.createID(runningGames: runningGames) //Server is creating a Game Id
         runningGames[gameID] = partialBoard
         
         let id = ID(id: gameID)
         let encoder = JSONEncoder()
+
+        var headers = HTTPHeaders()
+        headers.add(name: .contentType, value:"application/json")
         
         guard let data = try? encoder.encode(id),
               let string = String(data: data, encoding: .utf8) else {
             fatalError("Failed to encode ID to JSON")
         } 
         
-        return string
+        return Response(status: .ok, headers: headers, body: Response.Body(string: string))
     }
 
 
-    app.get("games", ":id", "cells") { req -> String in
+    app.get("games", ":id", "cells") { req -> Response in
         guard let id = req.parameters.get("id"), //client will later use to retrieve the running partial board
             let integerId = Int(id) else {
-            return "Bad Request"//Response(status: .badRequest)
+            return Response(status: .badRequest)
         }   
         guard let partialBoard = runningGames[integerId] else {
-            return "Cannot find board with given ID"//Response(status: .badRequest, body: "Cannot find board with given id")
+            return Response(status: .badRequest, body: "Cannot find board with given id")
         }
         guard let filter = req.query[String.self, at: "filter"] else {
-            return "Filter Required"
+            return Response(status: .badRequest, body: "Filter parameter required")
         }
         
         let boardCodable = BoardCodable(board: partialBoard.board)
         let encoder = JSONEncoder()
-        
+
+        var headers = HTTPHeaders()
+        headers.add(name: .contentType, value:"application/json")
+                
         guard let data = try? encoder.encode(boardCodable),
               let string = String(data: data, encoding: .utf8) else {
             fatalError("Failed to encode Board to JSON")
         } 
         
-        return string
+        return Response(status: .ok, headers: headers, body: Response.Body(string: string))
     }
 
     app.put("games", ":id", "cells", ":boxIndex", ":cellIndex") {req -> Response in
