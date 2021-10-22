@@ -2,30 +2,32 @@ public class Board{
 
     let solutionBoard : [[Tile]] //Creating solution board variable of type 2D Tile array
     var board : [[Tile]] //Creating partial board variable of type 2D Tile array
-    var boxes : [Box]
-    var rows : [Row]
-    var columns : [Column]
+    var boxes : [Box] //Creating boxes of type Array of Box
+    var rows : [Row] //Creating Rows of type Array of Row 
+    var columns : [Column] //Creating Columns of type Array of Columns
     
-    public init(boardDifficulty: String){
+    public init(boardDifficulty: BoardDifficulty){
         solutionBoard = Board.createBoard() // Initializing solution board
-        board = Board.partalizeBoard(board: solutionBoard, boardDifficulty: Board.getBoardDifficulty(boardDifficulty: boardDifficulty)) //Initializing partial board
-        boxes = Board.getBoxes(board: board)
-        rows = Board.getRows(board: board)
-        columns = Board.getColumns(board: board)
+        board = Board.partalizeBoard(board: solutionBoard, boardDifficulty: Board.getBoardDifficulty(boardDifficulty: boardDifficulty)!) //Initializing partial board
+        boxes = Board.getBoxes(board: board) //Creating boxes within board
+        rows = Board.getRows(board: board) //Creating rows within board 
+        columns = Board.getColumns(board: board) //Creating columns within Board
     }
 
-    public static func getBoardDifficulty(boardDifficulty: String) -> BoardDifficulty {
+    //Function to get the board difficulty
+
+    public static func getBoardDifficulty(boardDifficulty: String) -> BoardDifficulty? {
         switch (boardDifficulty) {
         case "easy":
-            return BoardDifficulty.superEasy
+            return BoardDifficulty.easy
         case "medium":
             return BoardDifficulty.medium
         case "hard":
             return BoardDifficulty.hard
         case "hell":
-            return BoardDifficulty.impossible
+            return BoardDifficulty.hell
         default:
-            return BoardDifficulty.easy
+            return nil
         }
     }
     
@@ -51,15 +53,14 @@ public class Board{
         
     }
 
+    //Function that Creates a new board of type 2D Array of Tiles with only partial solutions
+
     private static func partalizeBoard(board: [[Tile]], boardDifficulty: BoardDifficulty) -> [[Tile]]{
         //Switch case to choose how many tiles to remove from each line of the board (As per rules) for each difficulty
 
         var curBoard = [[Tile]]()
         
         switch (boardDifficulty) {
-        case .superEasy:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 3)
-            break
         case .easy:
             curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 4)
             break
@@ -69,16 +70,15 @@ public class Board{
         case .hard:
             curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 6)
             break
-        case .superHard:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 7)
-            break
-        case .impossible:
+        case .hell:
             curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 8)
             break
         }
 
         return curBoard
     }
+
+    //Function to filter board based on Filter parameter
 
     private static func filterBoard(board: [[Tile]], boardDifficulty: BoardDifficulty, filter: Filter) -> [[Tile]]{
         var currentBoard = board
@@ -94,12 +94,16 @@ public class Board{
 
         return currentBoard
     }
+
+    //Function to get the rows from the board
     
     public static func getRows (board: [[Tile]]) -> [Row] {
         return board.map{ (tiles: [Tile]) -> Row in
             return Row(tiles: tiles)
         }
     }
+
+    //Function to get the columns from the board
     
     private static func getColumns(board: [[Tile]]) -> [Column] {
         var columnTiles: [[Tile]] = [[Tile]](repeating: [Tile](), count: 9)
@@ -114,6 +118,8 @@ public class Board{
             return Column(tiles: tiles)
         }
     }
+
+    //Function to get the boxes from the Board
     
     private static func getBoxes(board: [[Tile]]) -> [Box] {
         var boxes = [Box]()

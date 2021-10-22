@@ -9,6 +9,8 @@ struct UserInput : Codable {
     let value : Int
 }
 
+//All Routes
+
 func routes(_ app: Application) throws {
     var runningGames = [Int: Board]()
 
@@ -19,13 +21,24 @@ func routes(_ app: Application) throws {
     app.get("hello") { req -> String in
         return("Hello, world!")
     }
+
+    //Post Request
     
-    app.post("games") {req -> String in
+    app.post("games") {req -> Response in
+
+        //Difficulty Parameter
+        
         guard let difficulty = req.query[String.self, at: "difficulty"] else {
-            return "Parameter difficulty required"
+            return Response(status: .badRequest, body: "Difficulty Parameter required")            
+        }
+
+        //In case invalid difficulty chosen
+        
+        guard let boardDifficulty = Board.getBoardDifficulty(boardDifficulty: difficulty) else{
+            return Response(status: .badRequest, body: "400 Bad Request (difficulty specified doesn't match requirements)")
         }
         
-        let partialBoard = Board(boardDifficulty: difficulty)
+        let partialBoard = Board(boardDifficulty: boardDifficulty)
         let gameID = GameID.createID(runningGames: runningGames) //Server is creating a Game Id
         runningGames[gameID] = partialBoard
         
@@ -37,15 +50,17 @@ func routes(_ app: Application) throws {
             fatalError("Failed to encode ID to JSON")
         } 
         
-        return string
+        return Response(status: .ok, body: "Test")
     }
 
-
+    //Get Request
+    
     app.get("games", ":id", "cells") { req -> String in
         guard let id = req.parameters.get("id"), //client will later use to retrieve the running partial board
             let integerId = Int(id) else {
             return "Bad Request"//Response(status: .badRequest)
-        }   
+        }
+        
         guard let partialBoard = runningGames[integerId] else {
             return "Cannot find board with given ID"//Response(status: .badRequest, body: "Cannot find board with given id")
         }
