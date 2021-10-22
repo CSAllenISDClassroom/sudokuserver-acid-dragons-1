@@ -1,4 +1,4 @@
-//Creating an enum with all the different difficulties possible
+//Creating an enum with all four different difficulties
 
 public enum BoardDifficulty {
     case easy

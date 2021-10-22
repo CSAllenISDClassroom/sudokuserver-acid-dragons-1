@@ -1,3 +1,4 @@
+
 public class Board{
 
     let solutionBoard : [[Tile]] //Creating solution board variable of type 2D Tile array
@@ -13,7 +14,7 @@ public class Board{
         rows = Board.getRows(board: board)
         columns = Board.getColumns(board: board)
     }
-
+// Function that return partial board or error message base on the board difficulty that the client typed in
     public static func getBoardDifficulty(boardDifficulty: String) -> BoardDifficulty {
         switch (boardDifficulty) {
         case "easy":
@@ -25,7 +26,7 @@ public class Board{
         case "hell":
             return BoardDifficulty.hell
         default:
-            fatalError("400 Bad Error")
+            fatalError("400 Bad Request (difficulty specified doesn't match requirements)")//return error when choosing none of the difficulty above
         }
     }
     
@@ -52,22 +53,22 @@ public class Board{
     }
 
     private static func partalizeBoard(board: [[Tile]], boardDifficulty: BoardDifficulty) -> [[Tile]]{
-        //Switch case to choose how many tiles to remove from each line of the board (As per rules) for each difficulty
+        //Switch case to choose how many tiles to remove from each line of the board (As per rules) for each difficulty that the client typed in
 
         var curBoard = [[Tile]]()
         
         switch (boardDifficulty) {
         case .easy:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 4)
+            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 4)//Remove 4 random tiles from each line when easy is chosen
             break
         case .medium:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 5)
+            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 5)//Remove 5 random tiles from each line when medium is chosen
             break
         case .hard:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 6)
+            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 6)//Remove 6 random tiles from each line when hard is chosen
             break
         case .hell:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 8)
+            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 8)//Remove 8 random tiles from each line when hell is chosen
             break
         }
 
@@ -176,7 +177,7 @@ public class Board{
     
     private static func createBoard() -> [[Tile]] {
         var board = [[Tile]]()
-        let shifts = [3,3,1,3,3,1,3,3,3]
+        let shifts = [3,3,1,3,3,1,3,3,3]//shift patern to ensure that there are no repeat number in the original board
         var line = createRandomLine()
         
         for i in 0..<shifts.count{
