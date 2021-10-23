@@ -80,7 +80,7 @@ public class Board{
 
     //Function to filter board based on Filter parameter
 
-    private static func filterBoard(board: [[Tile]], boardDifficulty: BoardDifficulty, filter: Filter) -> [[Tile]]{
+    private static func getFiliteredBoard(board: [[Tile]], boardDifficulty: BoardDifficulty, filter: Filter) -> [[Tile]]{
         var currentBoard = board
 
         switch (filter){
@@ -88,13 +88,12 @@ public class Board{
             return board
         case .repeated:
             print("repeated")
-        case .incorrect:
-            print("incorrect")
+        case .incorrect: 
+            return checkIncorrect(solutionBoard: solutionBoard, partialBoard: currentBoard)
         }
 
         return currentBoard
     }
-
     private static func compareTileFromBox(boxFirst: Box, boxSecond: Box, cellIndex: Int) -> Bool{
            if let boxFirstValue = boxFirst.getTile(cellIndex: cellIndex).getNumber(),
                let boxSecondValue = boxSecond.getTile(cellIndex: cellIndex).getNumber() {
@@ -103,33 +102,34 @@ public class Board{
            return false
     }
     
-    private static func checkIncorrect(solutionBoard: [[Tile]], partialBoard: [[Tile]]) -> [CellCodable]{
+    private static func checkIncorrect(solutionBoard: [[Tile]], partialBoard: [[Tile]]) -> [[Tile]]{
         let solutionBoxes = getBoxes(board:solutionBoard)
         let partialBoxes = getBoxes(board:partialBoard)
-        var incorrectTiles = [CellCodable]()
+        var incorrectTiles = [[Tile]]()
 
         for boxIndex in 0..<9{
-            incorrectTiles += compareBoxes(boxFirst: solutionBoxes[boxIndex], boxSecond: partialBoxes[boxIndex], boxIndex: boxIndex)
+            incorrectTiles.append(compareBoxes(boxFirst: solutionBoxes[boxIndex], boxSecond: partialBoxes[boxIndex], boxIndex: boxIndex))
         }
 
         return incorrectTiles
     }
 
-    private static func compareBoxes (boxFirst: Box, boxSecond: Box, boxIndex: Int) -> [CellCodable] {
-        var differentCells = [CellCodable]()
+    private static func compareBoxes (boxFirst: Box, boxSecond: Box, boxIndex: Int) -> [Tile] {
+        var differentCells = [Tile]()
 
         for cellIndex in 0..<9 {
             if (!compareTileFromBox(boxFirst: boxFirst, boxSecond: boxSecond, cellIndex: cellIndex)) {
                 let value = boxFirst.getTile(cellIndex: cellIndex).getNumber()
-                let position = PositionCodable(boxIndex: boxIndex, cellIndex: cellIndex)
-                differentCells.append(CellCodable(position: position, value: value))
+                differentCells.append(Tile(num: value, isMutable: true))
+            } else {
+                differentCells.append(Tile(num: nil, isMutable: true))
             }
         }
 
         return differentCells
     } 
     
-    private static func checkRepeatedRow(solutionBoard: [[Tile]], partializeBoard: [[Tile]]) -> [Tile]{
+/*    private static func checkRepeatedRow(solutionBoard: [[Tile]], partializeBoard: [[Tile]]) -> [Tile]{
         let solutionRows = getRows(board:solutionBoard)
         let partializeRows = getRows(board:board)
         var repeatedTiles = [Tile]
@@ -194,7 +194,7 @@ public class Board{
 
         return repeatedTiles
     }
-
+*/
      
 
     //Function to get the rows from the board

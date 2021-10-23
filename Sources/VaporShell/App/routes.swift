@@ -50,7 +50,7 @@ func routes(_ app: Application) throws {
             fatalError("Failed to encode ID to JSON")
         } 
         
-        return Response(status: .ok, body: "Test")
+        return Response(status: .ok, body: string)
     }
 
     //Get Request
@@ -64,11 +64,15 @@ func routes(_ app: Application) throws {
         guard let partialBoard = runningGames[integerId] else {
             return "Cannot find board with given ID"//Response(status: .badRequest, body: "Cannot find board with given id")
         }
-        guard let filter = req.query[String.self, at: "filter"] else {
+        guard let filterString = req.query[String.self, at: "filter"] else {
             return "Filter Required"
         }
+        guard let filter = getFilterFromString(filterString: filterString) else {
+            return "Ensure that filter is correctly named"
+        }
         
-        let boardCodable = BoardCodable(board: partialBoard.board)
+        let filteredBoard = getFilteredBoard(board: partialBoard.board, filter: filter)
+        let boardCodable = BoardCodable(board: partialBoard.board, shouldShowNil: shouldShowNilBoardCodable(filter: filter))
         let encoder = JSONEncoder()
         
         guard let data = try? encoder.encode(boardCodable),
@@ -78,7 +82,7 @@ func routes(_ app: Application) throws {
         
         return string
     }
-
+    
     app.put("games", ":id", "cells", ":boxIndex", ":cellIndex") {req -> Response in
         guard let id = req.parameters.get("id"),
               let intId = Int(id),
