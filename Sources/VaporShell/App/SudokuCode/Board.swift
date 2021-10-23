@@ -82,9 +82,9 @@ public class Board{
         case .all:
             return board
         case .repeated:
-            print("repeated")
+            print("repeated")  //notify wether the entered values are repeating in the same box, row, or column 
         case .incorrect:
-            print("incorrect")
+            print("incorrect") //notify wether the entered values are incorrect with the solution board 
         }
 
         return currentBoard
@@ -113,7 +113,7 @@ public class Board{
     private static func getBoxes(board: [[Tile]]) -> [Box] {
         var boxes = [Box]()
         for i in 0...8 { 
-            let xOffset = (i % 3) * 3
+            let xOffset = (i % 3) * 3  //Creating offset to create the seperate boxes (9 in total) 
             let yOffset = (i / 3) * 3
             var curTiles = [Tile]()
             for j in 0...8 {
