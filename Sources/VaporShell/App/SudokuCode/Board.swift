@@ -74,8 +74,6 @@ public class Board{
         case .hell:
             curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 8)//Remove 8 random tiles from each line when hell is chosen
             break
-        default:
-            break
         }
 
         return curBoard
@@ -84,18 +82,16 @@ public class Board{
     //Function to filter board based on Filter parameter
 
     public static func getFilteredBoard(board: [[Tile]], filter: Filter) -> [[Tile]]{
-        var currentBoard = board
-
         switch (filter){
         case .all:
             return board
         case .repeated:
             print("repeated")  //notify wether the entered values are repeating in the same box, row, or column 
         case .incorrect:
-            return checkIncorrect(solutionBoard: Board.solutionBoard, partialBoard: currentBoard) //notify wether the entered values are incorrect with the solution board 
+            return checkIncorrect(solutionBoard: Board.solutionBoard, partialBoard: board) //notify wether the entered values are incorrect with the solution board 
         }
 
-        return currentBoard
+        return board
     }
     private static func compareTileFromBox(boxFirst: Box, boxSecond: Box, cellIndex: Int) -> Bool{
            if let boxFirstValue = boxFirst.getTile(cellIndex: cellIndex).getNumber(),
