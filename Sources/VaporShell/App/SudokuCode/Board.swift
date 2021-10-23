@@ -86,12 +86,10 @@ public class Board{
         case .all:
             return board
         case .repeated:
-            print("repeated")  //notify wether the entered values are repeating in the same box, row, or column 
+            return checkRepeated(board: board)  //notify whether the entered values are repeated in the same box, row, or column 
         case .incorrect:
-            return checkIncorrect(solutionBoard: Board.solutionBoard, partialBoard: board) //notify wether the entered values are incorrect with the solution board 
+            return checkIncorrect(solutionBoard: Board.solutionBoard, partialBoard: board) //notify whether the entered values are incorrect with the solution board 
         }
-
-        return board
     }
     private static func compareTileFromBox(boxFirst: Box, boxSecond: Box, cellIndex: Int) -> Bool{
            if let boxFirstValue = boxFirst.getTile(cellIndex: cellIndex).getNumber(),
@@ -110,7 +108,6 @@ public class Board{
             incorrectTiles.append(compareBoxes(boxFirst: partialBoxes[boxIndex], boxSecond: solutionBoxes[boxIndex], boxIndex: boxIndex))
         }
 
-        print(incorrectTiles)
         return incorrectTiles
     }
 
@@ -126,73 +123,133 @@ public class Board{
         
         return differentCells
     } 
+
+    private static func checkRepeated (board: [[Tile]]) -> [[Tile]] {
+        var repeatedBoard = [[Tile]]()
+        var repeatedPositions = [PositionCodable]()
+        for rowIndex in 0..<getRows(board: board).count {
+            let row = getRows(board: board)[rowIndex]
+            repeatedPositions += checkRepeatedRow(row: row, rowIndex: rowIndex)
+        }
+
+        for columnIndex in 0..<getColumns(board: board).count {
+            let column = getColumns(board: board)[columnIndex]
+            repeatedPositions += checkRepeatedColumn(column: column, columnIndex: columnIndex)
+        }
+
+        for boxIndex in 0..<getBoxes(board: board).count {
+            let box = getBoxes(board: board)[boxIndex]
+            repeatedPositions += checkRepeatedBox(box: box, boxIndex: boxIndex)
+        }
+
+        for x in 0..<9 {
+            let positions = repeatedPositions.filter{$0.boxIndex == x}
+            let tiles = stripRepeats(positions: positions).map{getTileFromBoard(board: board, position: $0)}
+
+            repeatedBoard.append(tiles)
+        }
+
+        return repeatedBoard
+    }
     
-/*    private static func checkRepeatedRow(solutionBoard: [[Tile]], partializeBoard: [[Tile]]) -> [Tile]{
-        let solutionRows = getRows(board:solutionBoard)
-        let partializeRows = getRows(board:board)
-        var repeatedTiles = [Tile]
-
-        for x in (0 ... 9){
-            if(partializeRow[x] = nil){
-                continue
+    private static func getTileFromBoard (board: [[Tile]], position : PositionCodable) -> Tile{
+        return getBoxes(board: board)[position.boxIndex].getTile(cellIndex: position.cellIndex)
+    } 
+    
+    private static func stripRepeats (positions : [PositionCodable]) -> [PositionCodable]{
+        var cellIndexes = [Int]()
+        var newPositions = [PositionCodable]()
+        
+        for position in positions {
+            if (!cellIndexes.contains(position.cellIndex)) {
+                cellIndexes.append(position.cellIndex)
+                newPositions.append(position)
             }
-            else{                
-                if(partializeRow[x] == solutionRow[x]){
-                    repeatedTiles.append(partializeRow[x])
-                }
-                else{
-                    continue
+        }
+
+        return newPositions
+    }
+    
+    private static func checkRepeatedBox (box: Box, boxIndex: Int) -> [PositionCodable] {
+        let tiles = box.getTiles()
+        var cellIndexesAdded = [Int]()
+        var positions = [PositionCodable]()
+
+        for i in 0..<tiles.count - 1 {
+            for j in i + 1..<tiles.count{
+                if let first = tiles[i].getNumber(),
+                   let second = tiles[j].getNumber() {
+                    if first == second {
+                        if (!cellIndexesAdded.contains(i)) {
+                            positions.append(PositionCodable(boxIndex: boxIndex, cellIndex: i))
+                            cellIndexesAdded.append(i)
+                        }
+                        if (!cellIndexesAdded.contains(j)) {
+                            positions.append(PositionCodable(boxIndex: boxIndex, cellIndex: j))
+                            cellIndexesAdded.append(j)
+                        }
+                    } 
                 }
             }
         }
 
-        return repeatedTiles
+        return positions
     }
-
-    private static func checkRepeatedColumn(solutionBoard: [[Tile]], partializeBoard: [[Tile]]) -> [Tile]{
-        let solutionColumn = getColumns(board:solutionBoard)
-        let partializeColumn = getColumns(board:board)
-        var repeatedTiles = [Tile]
-
-        for x in (0 ... 9){
-            if(partializeColumn[x] = nil){
-                continue
-            }
-            else{                
-                if(partializeColumn[x] == solutionColumn[x]){
-                    repeatedTiles.append(partializeColumn[x])
-                }
-                else{
-                    continue
+    
+    private static func checkRepeatedRow (row: Row, rowIndex: Int) -> [PositionCodable]{
+        let tiles = row.getTiles()
+        var cellIndexesAdded = [Int]()
+        var positions = [PositionCodable]()
+        for i in 0..<tiles.count - 1 {
+            for j in i + 1..<tiles.count {
+                if let first = tiles[i].getNumber(),
+                   let second = tiles[j].getNumber() {
+                    if first == second {
+                        if (!cellIndexesAdded.contains(i)) {
+                            let boxIndex = row.getBoxIndex(rowIndex: rowIndex, cellIndex: i)
+                            positions.append(PositionCodable(boxIndex: boxIndex, cellIndex: i))
+                            cellIndexesAdded.append(i)
+                        }
+                        if (!cellIndexesAdded.contains(j)) {
+                            let boxIndex = row.getBoxIndex(rowIndex: rowIndex, cellIndex: j)
+                            positions.append(PositionCodable(boxIndex: boxIndex, cellIndex: j))
+                            cellIndexesAdded.append(j)
+                        }
+                    } 
                 }
             }
         }
 
-        return repeatedTiles
+        return positions
     }
 
-    private static func checkRepeatedBox(solutionBoard: [[Tile]], partializeBoard: [[Tile]]) -> [Tile]{
-        let solutionBox = getBoxes(board:solutionBoard)
-        let partializeBox = getBoxes(board:board)
-        var repeatedTiles = [Tile]
-
-        for x in (0 ... 9){
-            if(partializeBox[x] = nil){
-                continue
-            }
-            else{                
-                if(partializeBox[x] == solutionBox[x]){
-                    repeatedTiles.append(partializeBox[x])
-                }
-                else{
-                    continue
+    private static func checkRepeatedColumn (column: Column, columnIndex: Int) -> [PositionCodable]{
+        let tiles = column.getTiles()
+        var cellIndexesAdded = [Int]()
+        var positions = [PositionCodable]()
+        
+        for i in 0..<tiles.count - 1 {
+            for j in i + 1..<tiles.count{
+                if let first = tiles[i].getNumber(),
+                   let second = tiles[j].getNumber() {
+                    if first == second {
+                        if (!cellIndexesAdded.contains(i)) {
+                            let boxIndex = column.getBoxIndex(columnIndex: columnIndex, cellIndex: i)
+                            positions.append(PositionCodable(boxIndex: boxIndex, cellIndex: i))
+                            cellIndexesAdded.append(i)
+                        }
+                        if (!cellIndexesAdded.contains(j)) {
+                            let boxIndex = column.getBoxIndex(columnIndex: columnIndex, cellIndex: j)
+                            positions.append(PositionCodable(boxIndex: boxIndex, cellIndex: j))
+                            cellIndexesAdded.append(j)
+                        }
+                    } 
                 }
             }
         }
 
-        return repeatedTiles
+        return positions
     }
-*/
      
 
     //Function to get the rows from the board
@@ -224,13 +281,12 @@ public class Board{
     public static func getBoxes(board: [[Tile]]) -> [Box] {
         var boxes = [Box]()
         for i in 0..<board.count { 
-            let xOffset = (i % 3) * 3  //Creating offset to create the seperate boxes (9 in total) 
+            let xOffset = (i % 3) * 3 
             let yOffset = (i / 3) * 3
             var curTiles = [Tile]()
             for j in 0..<board[i].count {
                 let curX = (j % 3) + xOffset
                 let curY = (j / 3) + yOffset
-
                 curTiles.append(board[curY][curX])
             }
             boxes.append(Box(tiles: curTiles))

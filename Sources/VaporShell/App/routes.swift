@@ -72,7 +72,8 @@ func routes(_ app: Application) throws {
         }
         
         let filteredBoard = Board.getFilteredBoard(board: partialBoard.board, filter: filter) 
-        let boardCodable = BoardCodable(board: filteredBoard, includeNil: shouldShowNilBoardCodable(filter: filter))
+        let boardCodable = BoardCodable(board: filteredBoard, includeNil: shouldShowNilBoardCodable(filter: filter), shouldConvertToBoxes: filter == Filter.all)
+
         let encoder = JSONEncoder()
 
         var headers = HTTPHeaders()

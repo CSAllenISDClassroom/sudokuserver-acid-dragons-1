@@ -2,11 +2,6 @@ import Foundation
 
 let encoder = JSONEncoder()
 
-/*guard let data = try? encoder.encode(board),
-      let json = String(data: data, encoding: .utf8) else {
-    fatalError("Failed to encode data into json.")
-}*/
-
 // Structure definitions
 struct PositionCodable: Codable {
     let boxIndex: Int
@@ -39,10 +34,11 @@ struct BoxCodable: Codable {
 struct BoardCodable: Codable {
     let board: [BoxCodable]
     
-    init(board: [[Tile]], includeNil: Bool) {
+    init(board: [[Tile]], includeNil: Bool, shouldConvertToBoxes : Bool = true) {
         var boxCodable = [BoxCodable]()
         for boxIndex in 0 ..< board.count {
-            boxCodable.append(BoxCodable(boxIndex: boxIndex, box: Board.getBoxes(board: board)[boxIndex], includeNil: includeNil))
+            let box = shouldConvertToBoxes ? Board.getBoxes(board: board)[boxIndex] : Box(tiles: board[boxIndex])
+            boxCodable.append(BoxCodable(boxIndex: boxIndex, box: box, includeNil: includeNil))
         }
         self.board = boxCodable
     }
