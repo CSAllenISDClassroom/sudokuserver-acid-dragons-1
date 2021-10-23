@@ -8,13 +8,13 @@ public class Tile {
         mutable = isMutable
     }
 
-    //Function to get the number of the tile 
+    //Function to get the number from the tile 
     
     public func getNumber () -> Int? {
         return num
     }
 
-    //Function to remove the number of the tile
+    //Function to remove the number from the tile
     
     public func removeNumber () {
         num = nil

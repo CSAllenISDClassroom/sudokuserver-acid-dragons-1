@@ -21,10 +21,16 @@ struct CellCodable: Codable {
 struct BoxCodable: Codable {
     let cells: [CellCodable]
 
-    init(boxIndex: Int, row: Row) {
+    init(boxIndex: Int, box: Box, includeNil: Bool) {
         var cells = [CellCodable]()
-        for cellIndex in 0 ..< 9 {
-            cells.append(CellCodable(position: PositionCodable(boxIndex: boxIndex, cellIndex: cellIndex), value: row.getTile(cellIndex: cellIndex).getNumber()))
+        for cellIndex in 0 ..< box.getTiles().count {
+            if (includeNil) {
+                cells.append(CellCodable(position: PositionCodable(boxIndex: boxIndex, cellIndex: cellIndex), value: box.getTile(cellIndex: cellIndex).getNumber()))
+            } else {
+                if let value = box.getTile(cellIndex: cellIndex).getNumber() {
+                    cells.append(CellCodable(position: PositionCodable(boxIndex: boxIndex, cellIndex: cellIndex), value: value))
+                }
+            }
         }
         self.cells = cells
     }
@@ -33,10 +39,10 @@ struct BoxCodable: Codable {
 struct BoardCodable: Codable {
     let board: [BoxCodable]
     
-    init(board: [[Tile]]) {
+    init(board: [[Tile]], includeNil: Bool) {
         var boxCodable = [BoxCodable]()
-        for boxIndex in 0 ..< 9 {
-            boxCodable.append(BoxCodable(boxIndex: boxIndex, row: Board.getRows(board: board)[boxIndex]))
+        for boxIndex in 0 ..< board.count {
+            boxCodable.append(BoxCodable(boxIndex: boxIndex, box: Board.getBoxes(board: board)[boxIndex], includeNil: includeNil))
         }
         self.board = boxCodable
     }

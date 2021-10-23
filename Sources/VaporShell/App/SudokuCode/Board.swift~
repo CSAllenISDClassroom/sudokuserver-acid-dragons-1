@@ -2,19 +2,21 @@ public class Board{
 
     let solutionBoard : [[Tile]] //Creating solution board variable of type 2D Tile array
     var board : [[Tile]] //Creating partial board variable of type 2D Tile array
-    var boxes : [Box]
-    var rows : [Row]
-    var columns : [Column]
+    var boxes : [Box] //Creating boxes of type Array of Box
+    var rows : [Row] //Creating Rows of type Array of Row 
+    var columns : [Column] //Creating Columns of type Array of Columns
     
-    public init(boardDifficulty: String){
+    public init(boardDifficulty: BoardDifficulty){
         solutionBoard = Board.createBoard() // Initializing solution board
-        board = Board.partalizeBoard(board: solutionBoard, boardDifficulty: Board.getBoardDifficulty(boardDifficulty: boardDifficulty)) //Initializing partial board
-        boxes = Board.getBoxes(board: board)
-        rows = Board.getRows(board: board)
-        columns = Board.getColumns(board: board)
+        board = Board.partalizeBoard(board: solutionBoard, boardDifficulty: Board.getBoardDifficulty(boardDifficulty: boardDifficulty)!) //Initializing partial board
+        boxes = Board.getBoxes(board: board) //Creating boxes within board
+        rows = Board.getRows(board: board) //Creating rows within board 
+        columns = Board.getColumns(board: board) //Creating columns within Board
     }
 
-    public static func getBoardDifficulty(boardDifficulty: String) -> BoardDifficulty {
+    //Function to get the board difficulty
+
+    public static func getBoardDifficulty(boardDifficulty: String) -> BoardDifficulty? {
         switch (boardDifficulty) {
         case "easy":
             return BoardDifficulty.easy
@@ -25,7 +27,7 @@ public class Board{
         case "hell":
             return BoardDifficulty.hell
         default:
-            return BoardDifficulty.easy
+            return nil
         }
     }
     
@@ -51,6 +53,8 @@ public class Board{
         
     }
 
+    //Function that Creates a new board of type 2D Array of Tiles with only partial solutions
+
     private static func partalizeBoard(board: [[Tile]], boardDifficulty: BoardDifficulty) -> [[Tile]]{
         //Switch case to choose how many tiles to remove from each line of the board (As per rules) for each difficulty
 
@@ -74,6 +78,8 @@ public class Board{
         return curBoard
     }
 
+    //Function to filter board based on Filter parameter
+
     private static func filterBoard(board: [[Tile]], boardDifficulty: BoardDifficulty, filter: Filter) -> [[Tile]]{
         var currentBoard = board
 
@@ -88,12 +94,124 @@ public class Board{
 
         return currentBoard
     }
+
+    private static func compareTileFromBox(boxFirst: Box, boxSecond: Box, cellIndex: Int) -> Bool{
+           if let boxFirstValue = boxFirst.getTile(cellIndex: cellIndex).getNumber(),
+               let boxSecondValue = boxSecond.getTile(cellIndex: cellIndex).getNumber() {
+               return boxFirstValue == boxSecondValue
+           }
+           return false
+    }
     
-    public static func getRows (board: [[Tile]]) -> [Row] {
+    private static func checkIncorrect(solutionBoard: [[Tile]], partialBoard: [[Tile]]) -> [Tile]{
+        let solutionBoxes = getBoxes(board:solutionBoard)
+        let partialBoxes = getBoxes(board:partialBoard)
+        var incorrectTiles = [CellCodable]()
+
+        for x in (0 ... 9){
+            if let partialBox = partialBoxes[x],
+               let solutionBox = solutionBoxes[x]{
+                if(){
+                    
+                    continue
+                }
+                else{
+                    //tile is wrong
+                    incorrectTiles.append(partializeRow[x])
+                }
+            }
+        }
+
+        return incorrectTiles
+    }
+
+    private static func compareBoxes (boxFirst: Box, boxSecond: Box, boxIndex: Int) -> [CellCodable] {
+        var differentCells = [CellCodable]()
+
+        for cellIndex in 0..<9 {
+            if (!compareTileFromBox(boxFirst: boxFirst, boxSecond: boxSecond, cellIndex: cellIndex)) {
+                differentCells.append(CellCodable(position: PositionCodable(boxIndex: boxIndex, cellIndex: cellIndex), value: 6))
+            }
+        }
+    } 
+    
+    private static func checkRepeatedRow(solutionBoard: [[Tile]], partializeBoard: [[Tile]]) -> [Tile]{
+        let solutionRows = getRows(board:solutionBoard)
+        let partializeRows = getRows(board:board)
+        var repeatedTiles = [Tile]
+
+        for x in (0 ... 9){
+            if(partializeRow[x] = nil){
+                continue
+            }
+            else{                
+                if(partializeRow[x] == solutionRow[x]){
+                    repeatedTiles.append(partializeRow[x])
+                }
+                else{
+                    continue
+                }
+            }
+        }
+
+        return repeatedTiles
+    }
+
+    private static func checkRepeatedColumn(solutionBoard: [[Tile]], partializeBoard: [[Tile]]) -> [Tile]{
+        let solutionColumn = getColumns(board:solutionBoard)
+        let partializeColumn = getColumns(board:board)
+        var repeatedTiles = [Tile]
+
+        for x in (0 ... 9){
+            if(partializeColumn[x] = nil){
+                continue
+            }
+            else{                
+                if(partializeColumn[x] == solutionColumn[x]){
+                    repeatedTiles.append(partializeColumn[x])
+                }
+                else{
+                    continue
+                }
+            }
+        }
+
+        return repeatedTiles
+    }
+
+    private static func checkRepeatedBox(solutionBoard: [[Tile]], partializeBoard: [[Tile]]) -> [Tile]{
+        let solutionBox = getBoxes(board:solutionBoard)
+        let partializeBox = getBoxes(board:board)
+        var repeatedTiles = [Tile]
+
+        for x in (0 ... 9){
+            if(partializeBox[x] = nil){
+                continue
+            }
+            else{                
+                if(partializeBox[x] == solutionBox[x]){
+                    repeatedTiles.append(partializeBox[x])
+                }
+                else{
+                    continue
+                }
+            }
+        }
+
+        return repeatedTiles
+    }
+
+     
+
+    //Function to get the rows from the board
+    
+    private static func getRows (board: [[Tile]]) -> [Row] {
         return board.map{ (tiles: [Tile]) -> Row in
             return Row(tiles: tiles)
         }
     }
+
+    //Function to get the columns from the board
     
     private static func getColumns(board: [[Tile]]) -> [Column] {
         var columnTiles: [[Tile]] = [[Tile]](repeating: [Tile](), count: 9)
@@ -108,6 +226,8 @@ public class Board{
             return Column(tiles: tiles)
         }
     }
+
+    //Function to get the boxes from the Board
     
     private static func getBoxes(board: [[Tile]]) -> [Box] {
         var boxes = [Box]()
