@@ -9,6 +9,8 @@ struct UserInput : Codable {
     let value : Int
 }
 
+//All Routes
+
 func routes(_ app: Application) throws {
     var runningGames = [Int: Board]()
 
@@ -19,13 +21,23 @@ func routes(_ app: Application) throws {
     app.get("hello") { req -> String in
         return("Hello, world!")
     }
+
+    //Post Request
     
     app.post("games") {req -> Response in
+        //Difficulty Parameter
+        
         guard let difficulty = req.query[String.self, at: "difficulty"] else {
-            return Response(status :.badRequest, body: "Difficulty Parameter Required")
+            return Response(status: .badRequest, body: "Difficulty Parameter required")            
         }
 
-        let partialBoard = Board(boardDifficulty: difficulty)
+        //In case invalid difficulty chosen
+        
+        guard let boardDifficulty = Board.getBoardDifficulty(boardDifficulty: difficulty) else{
+            return Response(status: .badRequest, body: "400 Bad Request (difficulty specified doesn't match requirements)")
+        }
+        
+        let partialBoard = Board(boardDifficulty: boardDifficulty)
         let gameID = GameID.createID(runningGames: runningGames) //Server is creating a Game Id
         runningGames[gameID] = partialBoard
         
@@ -39,7 +51,6 @@ func routes(_ app: Application) throws {
               let string = String(data: data, encoding: .utf8) else {
             fatalError("Failed to encode ID to JSON")
         } 
-        
         return Response(status: .ok, headers: headers, body: Response.Body(string: string))
     }
 
@@ -48,15 +59,20 @@ func routes(_ app: Application) throws {
         guard let id = req.parameters.get("id"), //client will later use to retrieve the running partial board
             let integerId = Int(id) else {
             return Response(status: .badRequest)
-        }   
+        }
+        
         guard let partialBoard = runningGames[integerId] else {
             return Response(status: .badRequest, body: "Cannot find board with given id")
         }
-        guard let filter = req.query[String.self, at: "filter"] else {
+        guard let filterString = req.query[String.self, at: "filter"] else {
             return Response(status: .badRequest, body: "Filter parameter required")
         }
+        guard let filter = getFilterFromString(filterString: filterString) else {
+            return Response(status: .badRequest, body: "Ensure that filter is correctly named")
+        }
         
-        let boardCodable = BoardCodable(board: partialBoard.board)
+        let filteredBoard = Board.getFilteredBoard(board: partialBoard.board, filter: filter) 
+        let boardCodable = BoardCodable(board: filteredBoard, includeNil: shouldShowNilBoardCodable(filter: filter))
         let encoder = JSONEncoder()
 
         var headers = HTTPHeaders()
@@ -69,7 +85,7 @@ func routes(_ app: Application) throws {
         
         return Response(status: .ok, headers: headers, body: Response.Body(string: string))
     }
-
+    
     app.put("games", ":id", "cells", ":boxIndex", ":cellIndex") {req -> Response in
         guard let id = req.parameters.get("id"),
               let intId = Int(id),
