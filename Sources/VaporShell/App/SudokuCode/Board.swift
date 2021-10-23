@@ -1,3 +1,4 @@
+
 public class Board{
 
     let solutionBoard : [[Tile]] //Creating solution board variable of type 2D Tile array
@@ -55,24 +56,26 @@ public class Board{
 
     //Function that Creates a new board of type 2D Array of Tiles with only partial solutions
 
-    private static func partalizeBoard(board: [[Tile]], boardDifficulty: BoardDifficulty) -> [[Tile]]{
-        //Switch case to choose how many tiles to remove from each line of the board (As per rules) for each difficulty
+    private static func partalizeBoard(board: [[Tile]], boardDifficulty: BoardDifficulty) -> [[Tile]]?{
+        //Switch case to choose how many tiles to remove from each line of the board (As per rules) for each difficulty that the client typed in
 
         var curBoard = [[Tile]]()
         
         switch (boardDifficulty) {
         case .easy:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 4)
+            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 4)//Remove 4 random tiles from each line when easy is chosen
             break
         case .medium:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 5)
+            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 5)//Remove 5 random tiles from each line when medium is chosen
             break
         case .hard:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 6)
+            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 6)//Remove 6 random tiles from each line when hard is chosen
             break
         case .hell:
-            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 8)
+            curBoard = removeRandomTilesFromEachLine(board: board, tilesToRemove: 8)//Remove 8 random tiles from each line when hell is chosen
             break
+        default:
+            return nil
         }
 
         return curBoard
@@ -87,9 +90,9 @@ public class Board{
         case .all:
             return board
         case .repeated:
-            print("repeated")
-        case .incorrect: 
-            return checkIncorrect(solutionBoard: solutionBoard, partialBoard: currentBoard)
+            print("repeated")  //notify wether the entered values are repeating in the same box, row, or column 
+        case .incorrect:
+            return checkIncorrect(solutionBoard: solutionBoard, partialBoard: currentBoard) //notify wether the entered values are incorrect with the solution board 
         }
 
         return currentBoard
@@ -226,7 +229,7 @@ public class Board{
     private static func getBoxes(board: [[Tile]]) -> [Box] {
         var boxes = [Box]()
         for i in 0...8 { 
-            let xOffset = (i % 3) * 3
+            let xOffset = (i % 3) * 3  //Creating offset to create the seperate boxes (9 in total) 
             let yOffset = (i / 3) * 3
             var curTiles = [Tile]()
             for j in 0...8 {
@@ -290,7 +293,7 @@ public class Board{
     
     private static func createBoard() -> [[Tile]] {
         var board = [[Tile]]()
-        let shifts = [3,3,1,3,3,1,3,3,3]
+        let shifts = [3,3,1,3,3,1,3,3,3]//shift patern to ensure that there are no repeat number in the original board
         var line = createRandomLine()
         
         for i in 0..<shifts.count{
