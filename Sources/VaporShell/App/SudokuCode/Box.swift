@@ -1,3 +1,3 @@
-class Box : Group{
+public class Box : Group{
 
 }

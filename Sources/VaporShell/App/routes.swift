@@ -64,15 +64,15 @@ func routes(_ app: Application) throws {
         guard let partialBoard = runningGames[integerId] else {
             return Response(status: .badRequest, body: "Cannot find board with given id")
         }
-        guard let filter = req.query[String.self, at: "filter"] else {
+        guard let filterString = req.query[String.self, at: "filter"] else {
             return Response(status: .badRequest, body: "Filter parameter required")
         }
         guard let filter = getFilterFromString(filterString: filterString) else {
-            return "Ensure that filter is correctly named"
+            return Response(status: .badRequest, body: "Ensure that filter is correctly named")
         }
         
-        let filteredBoard = getFilteredBoard(board: partialBoard.board, filter: filter)
-        let boardCodable = BoardCodable(board: partialBoard.board, shouldShowNil: shouldShowNilBoardCodable(filter: filter))
+        let filteredBoard = Board.getFilteredBoard(board: partialBoard.board, filter: filter) 
+        let boardCodable = BoardCodable(board: filteredBoard, includeNil: shouldShowNilBoardCodable(filter: filter))
         let encoder = JSONEncoder()
 
         var headers = HTTPHeaders()
